@@ -60,7 +60,8 @@ export interface PolicyStreamEvent {
 export async function streamPolicy(
   path: string,
   body: unknown,
-  onEvent: (event: PolicyStreamEvent) => void
+  onEvent: (event: PolicyStreamEvent) => void,
+  signal?: AbortSignal
 ): Promise<PolicyStreamEvent> {
   const headers = new Headers({ "Content-Type": "application/json", Accept: "text/event-stream" });
   const token = useAuthStore.getState().token;
@@ -71,6 +72,7 @@ export async function streamPolicy(
     body: JSON.stringify(body),
     credentials: "include",
     cache: "no-store",
+    signal,
   });
   if (!response.ok) {
     const parsed = await apiErrorMessage(response);

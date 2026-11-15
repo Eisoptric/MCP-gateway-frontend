@@ -9,6 +9,7 @@ import type {
   ApiTool,
   ApiToolSet,
 } from "@/lib/api";
+import { compareNewestFirst } from "@/lib/activity-pages";
 import { normalizeSettings } from "@/lib/agent-config";
 import {
   approvalRisk,
@@ -258,7 +259,7 @@ function actorKindFor(event: string, actorType: string): ActorKind {
   return "saturn";
 }
 
-function mapActivity(event: ApiActivity, agents: ApiAgent[]): ActivityEvent {
+function mapActivity(event: ApiActivity, agents: Pick<ApiAgent, "id" | "name">[]): ActivityEvent {
   const meta = EVENT_META[event.event] ?? {
     title: event.event.replaceAll("_", " "),
     titleKey: undefined,
@@ -416,12 +417,18 @@ function mapToolSets(sets: ApiToolSet[]): ToolSet[] {
   }));
 }
 
+/** Events newest first, as the audit log shows them. */
+export function mapActivityEvents(activity: ApiActivity[], agents: Pick<ApiAgent, "id" | "name">[]): ActivityEvent[] {
+  return activity.map((event) => mapActivity(event, agents)).sort(compareNewestFirst);
+}
+
 export function mapConsole(input: {
   agents: ApiAgent[];
   tools: ApiTool[];
   policies: ApiPolicy[];
   approvals: ApiApproval[];
   activity: ApiActivity[];
+  activityNext?: string | null;
   health: ApiHealth | undefined;
   mcpServers?: ApiMcpServer[];
   toolSets?: ApiToolSet[];
@@ -436,9 +443,8 @@ export function mapConsole(input: {
     approvals: input.approvals.map((approval) =>
       mapApproval(approval, input.policies, input.activity)
     ),
-    events: input.activity
-      .map((event) => mapActivity(event, input.agents))
-      .sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime()),
+    events: mapActivityEvents(input.activity, input.agents),
+    activityNext: input.activityNext ?? null,
     services: mapServices(input.health),
   };
 }
