@@ -1,6 +1,6 @@
 // The API client, split by area under ./api. Everything is re-exported here so callers keep
 // importing from "@/lib/api".
-export { ApiError } from "./api/transport";
+export { ApiError, type SecondFactor } from "./api/transport";
 export * from "./api/types";
 export * from "./api/auth";
 export * from "./api/payload-keys";

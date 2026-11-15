@@ -2,15 +2,20 @@ import { useAuthStore } from "@/lib/auth";
 
 export const API_BASE = "/saturn-api";
 
+/** The second factor a step-up asked for: an authenticator code, or the passkey itself. */
+export type SecondFactor = "totp" | "passkey";
+
 export class ApiError extends Error {
   status: number;
   migration?: "v1" | "password";
+  secondFactor?: SecondFactor;
 
-  constructor(status: number, message: string, migration?: "v1" | "password") {
+  constructor(status: number, message: string, migration?: "v1" | "password", secondFactor?: SecondFactor) {
     super(message);
     this.name = "ApiError";
     this.status = status;
     this.migration = migration;
+    this.secondFactor = secondFactor;
   }
 }
 
@@ -30,20 +35,29 @@ function migrationFrom(detail: unknown): "v1" | "password" | undefined {
   return undefined;
 }
 
-export async function apiErrorMessage(response: Response): Promise<{ message: string; migration?: "v1" | "password" }> {
+function secondFactorFrom(detail: unknown): SecondFactor | undefined {
+  if (!detail || typeof detail !== "object" || Array.isArray(detail)) return undefined;
+  const value = (detail as { second_factor?: unknown }).second_factor;
+  return value === "totp" || value === "passkey" ? value : undefined;
+}
+
+export async function apiErrorMessage(
+  response: Response,
+): Promise<{ message: string; migration?: "v1" | "password"; secondFactor?: SecondFactor }> {
   const fallback = response.statusText || "Request failed";
   const text = await response.text();
   if (!text) return { message: fallback };
   try {
     const body = JSON.parse(text) as { detail?: unknown; message?: unknown };
     const migration = migrationFrom(body.detail);
+    const secondFactor = secondFactorFrom(body.detail);
     if (typeof body.detail === "string" && isSafeErrorText(body.detail)) {
       return { message: body.detail.trim(), migration };
     }
     if (body.detail && typeof body.detail === "object" && !Array.isArray(body.detail)) {
       const message = (body.detail as { message?: unknown }).message;
       if (typeof message === "string" && isSafeErrorText(message)) {
-        return { message: message.trim(), migration };
+        return { message: message.trim(), migration, secondFactor };
       }
     }
     if (Array.isArray(body.detail)) {
@@ -89,7 +103,7 @@ async function send(path: string, init?: RequestInit, auth = true): Promise<Resp
 
   if (!response.ok) {
     const parsed = await apiErrorMessage(response);
-    throw new ApiError(response.status, parsed.message, parsed.migration);
+    throw new ApiError(response.status, parsed.message, parsed.migration, parsed.secondFactor);
   }
 
   return response;
