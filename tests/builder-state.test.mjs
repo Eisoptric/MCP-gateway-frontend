@@ -11,6 +11,8 @@ import {
   needsRiskConfirmation,
   nextView,
   parseTestArgs,
+  PolicyJsonError,
+  readPolicyJson,
   savedStatus,
   simulationText,
   statusKey,
@@ -21,7 +23,19 @@ import { ApiError } from "../src/lib/api/transport.ts";
 
 const t = (path) => path;
 const BUSY = ["save", "validate", "activate", "test", "optimize"];
-const CONTROLS = ["cycleView", "optimize", "save", "validate", "testPanel", "activate", "delete", "sendOptimize", "runTest"];
+const CONTROLS = [
+  "cycleView",
+  "optimize",
+  "save",
+  "validate",
+  "testPanel",
+  "activate",
+  "delete",
+  "confirmDelete",
+  "cancelDelete",
+  "sendOptimize",
+  "runTest",
+];
 
 function initial(overrides = {}) {
   // Frozen so a reducer that mutates its input fails loudly.
@@ -55,7 +69,7 @@ test("a new builder starts idle on the canvas with the policy's status and versi
   assert.equal(state.confirmRisk, false);
 });
 
-test("while any request runs every control that starts or toggles work is disabled", () => {
+test("while any request runs every control that starts or toggles work is disabled, the delete confirmation included", () => {
   for (const busy of BUSY) {
     const state = initial({ busy, testTool: "fs.read" });
     for (const control of CONTROLS) assert.equal(controlEnabled(state, control), false, `${busy}/${control}`);
@@ -68,6 +82,8 @@ test("when idle everything is enabled, except Run without a capability and Delet
   assert.equal(controlEnabled(state, "runTest"), false);
   assert.equal(controlEnabled(initial({ testTool: "fs.read" }), "runTest"), true);
   assert.equal(controlEnabled(state, "delete", true), false);
+  assert.equal(controlEnabled(state, "confirmDelete", true), false);
+  assert.equal(controlEnabled(state, "cancelDelete", true), true);
   assert.equal(controlEnabled(state, "save", true), true);
 });
 
@@ -84,6 +100,7 @@ test("starting a request clears the error, and only what that request owns", () 
   assert.equal(testRun.testResult, "");
   const optimize = run(before, { type: "start", busy: "optimize" });
   assert.equal(optimize.jsonError, "");
+  assert.equal(optimize.optimizeRun, before.optimizeRun + 1);
 });
 
 test("a failure keeps its message after the request finishes", () => {
@@ -92,18 +109,27 @@ test("a failure keeps its message after the request finishes", () => {
   assert.equal(state.error, "nope");
 });
 
-test("unreadable JSON is reported per request, and API errors show the server's message", () => {
+test("unreadable policy JSON says so from every request; bad test arguments say that instead", () => {
+  for (const busy of BUSY) assert.equal(failureMessage(new PolicyJsonError(), busy, t), "policies.jsonInvalid", busy);
   const syntax = new SyntaxError("x");
+  assert.equal(failureMessage(syntax, "test", t), "policies.badJson");
   assert.equal(failureMessage(syntax, "save", t), "policies.jsonInvalid");
   assert.equal(failureMessage(syntax, "optimize", t), "policies.jsonInvalid");
-  assert.equal(failureMessage(syntax, "test", t), "policies.badJson");
-  // Validate and activate have no JSON message, so bad editor JSON reads as a failed save.
   assert.equal(failureMessage(syntax, "validate", t), "policies.saveFailed");
   assert.equal(failureMessage(syntax, "activate", t), "policies.saveFailed");
   for (const busy of BUSY) {
     assert.equal(failureMessage(new ApiError(400, "Server says no"), busy, t), "Server says no", busy);
     assert.equal(failureMessage(new Error("internal"), busy, t), "policies.saveFailed", busy);
   }
+});
+
+test("the JSON editor's text must be a definition with node and edge lists", () => {
+  assert.deepEqual(readPolicyJson('{"nodes":[],"edges":[]}'), { nodes: [], edges: [] });
+  for (const text of ["{ broken", "null", "[]", '{"nodes":[]}', '{"nodes":{},"edges":[]}', ""]) {
+    assert.throws(() => readPolicyJson(text), PolicyJsonError, text);
+  }
+  // Still a SyntaxError, so it is never mistaken for an API failure.
+  assert.ok(new PolicyJsonError() instanceof SyntaxError);
 });
 
 test("saving replaces the editor text with what was sent and takes status and version from the reply", () => {
@@ -208,15 +234,36 @@ test("unreadable JSON keeps the JSON view and the unsaved edits; readable JSON m
 });
 
 test("a JSON edit drops the optimizer's proposal; applying one shows its JSON", () => {
-  const proposed = run(initial({ askOptimize: true, view: "json" }), { type: "proposed", proposal });
+  const proposed = run(initial({ askOptimize: true, view: "json" }), { type: "start", busy: "optimize" }, { type: "proposed", run: 1, proposal }, { type: "done" });
   assert.equal(proposed.askOptimize, false);
   assert.equal(proposed.proposal, proposal);
   assert.equal(run(proposed, { type: "editJson", text: "{}" }).proposal, null);
   assert.equal(run(proposed, { type: "discardProposal" }).proposal, null);
-  const applied = run({ ...proposed, view: "form" }, { type: "applyProposal", text: "{ optimized }" });
+  const applied = run(proposed, { type: "applyProposal", text: "{ optimized }" });
   assert.deepEqual([applied.view, applied.jsonText, applied.proposal], ["json", "{ optimized }", null]);
-  // Leaving the JSON view keeps the proposal; it shows again on return.
-  assert.equal(run(proposed, { type: "showForm", text: "{}" }, { type: "showCanvas" }, { type: "showJson", text: "{}" }).proposal, proposal);
+});
+
+test("leaving the JSON view or saving different text drops the proposal, so it never comes back stale", () => {
+  const proposed = initial({ view: "json", jsonText: "{ a }", proposal });
+  assert.equal(run(proposed, { type: "showForm", text: "{ a }" }).proposal, null);
+  assert.equal(run({ ...proposed, view: "form" }, { type: "showCanvas" }).proposal, null);
+  assert.equal(run({ ...proposed, view: "canvas" }, { type: "showJson", text: "{ a }" }).proposal, null);
+  assert.equal(run(proposed, { type: "jsonSynced", text: "{ a, synced }" }).proposal, null);
+  assert.equal(run(proposed, { type: "jsonSynced", text: "{ a }" }).proposal, proposal, "a save of the same text keeps it");
+  assert.equal(run(proposed, { type: "jsonRejected", message: "bad" }).proposal, proposal, "staying in JSON keeps it");
+});
+
+test("cancelling the optimize form drops the reply of the request it cancelled", () => {
+  const running = run(initial({ askOptimize: true }), { type: "start", busy: "optimize" });
+  const cancelled = run(running, { type: "closeOptimize" });
+  assert.equal(cancelled.askOptimize, false);
+  const late = run(cancelled, { type: "proposed", run: running.optimizeRun, proposal }, { type: "done" });
+  assert.equal(late.proposal, null);
+  assert.equal(late.askOptimize, false);
+  assert.equal(late.busy, null);
+  // A newer request's reply still lands.
+  const again = run(late, { type: "toggleOptimize" }, { type: "start", busy: "optimize" });
+  assert.equal(run(again, { type: "proposed", run: again.optimizeRun, proposal }).proposal, proposal);
 });
 
 test("the optimize form toggles and keeps its instructions when closed", () => {
@@ -259,7 +306,7 @@ test("labels follow the request in flight", () => {
   });
   assert.equal(busyKeys(initial({ busy: "optimize" })).sendOptimize, "policies.optimizing");
   assert.equal(busyKeys(initial({ busy: "save" })).save, "policies.saving");
-  assert.equal(busyKeys(initial({ busy: "test" })).runTest, "policies.validating");
+  assert.equal(busyKeys(initial({ busy: "test" })).runTest, "policies.testing");
   assert.equal(busyKeys(initial({ busy: "activate", confirmRisk: true })).activate, "policies.activating");
   assert.deepEqual(["validated", "draft", "paused", "active"].map(statusKey), [
     "policies.validated",

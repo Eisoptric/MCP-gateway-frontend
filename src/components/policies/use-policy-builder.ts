@@ -1,6 +1,6 @@
 "use client";
 
-import { useReducer, useState, type Dispatch, type SetStateAction } from "react";
+import { useReducer, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import type { Edge } from "@xyflow/react";
 import { useUpdatePolicy } from "@/hooks/use-console";
 import {
@@ -10,6 +10,7 @@ import {
   isActivateConflict,
   needsRiskConfirmation,
   parseTestArgs,
+  readPolicyJson,
   simulationText,
 } from "@/components/policies/builder-state";
 import { syncNodeApprovals } from "@/components/policies/policy-approval-sync";
@@ -18,14 +19,6 @@ import { activatePolicy, simulatePolicy, streamPolicy, validatePolicy } from "@/
 import { useI18n } from "@/lib/i18n";
 import { toDefinition, toFlow, type FlowNode } from "@/lib/policy-graph";
 import type { Policy, PolicyDefinition, PolicyAnalysis } from "@/types";
-
-function readJson(text: string): PolicyDefinition {
-  const parsed = JSON.parse(text) as PolicyDefinition;
-  if (!parsed || !Array.isArray(parsed.nodes) || !Array.isArray(parsed.edges)) {
-    throw new SyntaxError("policy");
-  }
-  return parsed;
-}
 
 /** The builder's requests and view switches, run against the reducer in builder-state.ts. */
 export function usePolicyBuilder({
@@ -53,13 +46,14 @@ export function usePolicyBuilder({
   const update = useUpdatePolicy();
   const [state, dispatch] = useReducer(builderReducer, policy, initialBuilderState);
   const [progress, setProgress] = useState<PolicyProgress | null>(null);
+  const optimizeAbort = useRef<AbortController | null>(null);
 
   function canvasDefinition() {
     return toDefinition(nodes, edges, analyses, setId || null);
   }
 
   function editorDefinition() {
-    return state.view === "json" ? readJson(state.jsonText) : canvasDefinition();
+    return state.view === "json" ? readPolicyJson(state.jsonText) : canvasDefinition();
   }
 
   function applyGraph(definition: PolicyDefinition) {
@@ -103,7 +97,7 @@ export function usePolicyBuilder({
     }
     if (state.view === "json") {
       try {
-        dispatch({ type: "showForm", text: applyGraph(readJson(state.jsonText)) });
+        dispatch({ type: "showForm", text: applyGraph(readPolicyJson(state.jsonText)) });
       } catch {
         dispatch({ type: "jsonRejected", message: t("policies.jsonInvalid") });
       }
@@ -113,6 +107,10 @@ export function usePolicyBuilder({
   }
 
   async function optimize() {
+    // start bumps optimizeRun; a cancel bumps it again, so the reply is dropped if it still arrives.
+    const run = state.optimizeRun + 1;
+    const controller = new AbortController();
+    optimizeAbort.current = controller;
     dispatch({ type: "start", busy: "optimize" });
     setProgress({ label: t("policies.optimizing"), done: 0, total: 0, indeterminate: true, note: "" });
     try {
@@ -122,20 +120,30 @@ export function usePolicyBuilder({
       const result = await streamPolicy(
         `/policies/${policy.id}/optimize/stream`,
         { definition, instructions: state.optimizeInstructions },
-        (event) => setProgress((current) => applyProgress(current, event, t))
+        (event) => setProgress((current) => applyProgress(current, event, t)),
+        controller.signal
       );
-      if (!result.definition || !result.diff) throw new Error("policy");
       setProgress(null);
+      if (controller.signal.aborted) return;
+      if (!result.definition || !result.diff) throw new Error("policy");
       dispatch({
         type: "proposed",
+        run,
         proposal: { definition: result.definition, diff: result.diff, json: JSON.stringify(result.definition, null, 2) },
       });
     } catch (caught) {
       setProgress(null);
-      dispatch({ type: "failed", message: failureMessage(caught, "optimize", t) });
+      // A cancel aborts the stream; that is not a failure to report.
+      if (!controller.signal.aborted) dispatch({ type: "failed", message: failureMessage(caught, "optimize", t) });
     } finally {
+      if (optimizeAbort.current === controller) optimizeAbort.current = null;
       dispatch({ type: "done" });
     }
+  }
+
+  function cancelOptimize() {
+    optimizeAbort.current?.abort();
+    dispatch({ type: "closeOptimize" });
   }
 
   async function validate() {
@@ -194,7 +202,7 @@ export function usePolicyBuilder({
     if (state.proposal) dispatch({ type: "applyProposal", text: applyGraph(state.proposal.definition) });
   }
 
-  return { state, dispatch, progress, save, cycleView, optimize, validate, activate, runTest, applyProposal };
+  return { state, dispatch, progress, save, cycleView, optimize, cancelOptimize, validate, activate, runTest, applyProposal };
 }
 
 export type PolicyBuilderSession = ReturnType<typeof usePolicyBuilder>;

@@ -5,7 +5,7 @@ import type { PolicyProposal } from "@/components/policies/policy-optimize-propo
 // transport rather than "@/lib/api": the barrel pulls in every API area, the tests only need the class.
 import { ApiError } from "@/lib/api/transport";
 import type { PolicyValidation } from "@/lib/api/policies";
-import type { PolicyStatus } from "@/types";
+import type { PolicyDefinition, PolicyStatus } from "@/types";
 
 export type BuilderView = "canvas" | "json" | "form";
 export type BuilderBusy = "save" | "validate" | "activate" | "test" | "optimize";
@@ -31,6 +31,8 @@ export interface BuilderState {
   askOptimize: boolean;
   optimizeInstructions: string;
   proposal: PolicyProposal | null;
+  /** Counts optimize requests and cancels, so a reply to a cancelled request is dropped. */
+  optimizeRun: number;
 }
 
 export type BuilderAction =
@@ -56,7 +58,7 @@ export type BuilderAction =
   | { type: "toggleOptimize" }
   | { type: "closeOptimize" }
   | { type: "optimizeInstructions"; value: string }
-  | { type: "proposed"; proposal: PolicyProposal }
+  | { type: "proposed"; run: number; proposal: PolicyProposal }
   | { type: "applyProposal"; text: string }
   | { type: "discardProposal" };
 
@@ -78,6 +80,7 @@ export function initialBuilderState(policy: { status: PolicyStatus; version: num
     askOptimize: false,
     optimizeInstructions: "",
     proposal: null,
+    optimizeRun: 0,
   };
 }
 
@@ -86,7 +89,7 @@ function started(state: BuilderState, busy: BuilderBusy): BuilderState {
   const next = { ...state, busy, error: "" };
   if (busy === "validate") return { ...next, panel: "validation" };
   if (busy === "test") return { ...next, testResult: "" };
-  if (busy === "optimize") return { ...next, jsonError: "" };
+  if (busy === "optimize") return { ...next, jsonError: "", optimizeRun: state.optimizeRun + 1 };
   return next;
 }
 
@@ -99,7 +102,8 @@ export function builderReducer(state: BuilderState, action: BuilderAction): Buil
     case "done":
       return { ...state, busy: null };
     case "jsonSynced":
-      return { ...state, jsonText: action.text };
+      // Saving rewrites the editor; a proposal made from the old text no longer matches it.
+      return action.text === state.jsonText ? state : { ...state, jsonText: action.text, proposal: null };
     case "persisted":
       return { ...state, status: savedStatus(action.status), version: action.version ?? state.version, confirmRisk: false };
     case "validated":
@@ -117,12 +121,14 @@ export function builderReducer(state: BuilderState, action: BuilderAction): Buil
       return { ...state, confirmRisk: true, panel: "validation" };
     case "activated":
       return { ...state, status: "active", version: action.version ?? state.version, confirmRisk: false };
+    // The proposal lives beside the JSON editor and is computed from its text, so it goes
+    // whenever the view changes rather than coming back stale after canvas or form edits.
     case "showJson":
-      return { ...state, jsonError: "", jsonText: action.text, view: "json" };
+      return { ...state, jsonError: "", jsonText: action.text, view: "json", proposal: null };
     case "showForm":
-      return { ...state, jsonText: action.text, jsonError: "", view: "form" };
+      return { ...state, jsonText: action.text, jsonError: "", view: "form", proposal: null };
     case "showCanvas":
-      return { ...state, view: "canvas" };
+      return { ...state, view: "canvas", proposal: null };
     case "jsonRejected":
       return { ...state, jsonError: action.message };
     case "editJson":
@@ -139,10 +145,12 @@ export function builderReducer(state: BuilderState, action: BuilderAction): Buil
     case "toggleOptimize":
       return { ...state, askOptimize: !state.askOptimize };
     case "closeOptimize":
-      return { ...state, askOptimize: false };
+      // Closing the form cancels a running optimize: its reply must not show up afterwards.
+      return { ...state, askOptimize: false, optimizeRun: state.optimizeRun + 1 };
     case "optimizeInstructions":
       return { ...state, optimizeInstructions: action.value };
     case "proposed":
+      if (action.run !== state.optimizeRun) return state;
       return { ...state, askOptimize: false, proposal: action.proposal };
     case "applyProposal":
       return { ...state, jsonText: action.text, proposal: null, view: "json" };
@@ -173,16 +181,19 @@ export type BuilderControl =
   | "testPanel"
   | "activate"
   | "delete"
+  | "confirmDelete"
+  | "cancelDelete"
   | "sendOptimize"
   | "runTest";
 
 /**
- * Whether a control can be used. Everything that starts or toggles work waits for the request
- * in flight; the delete confirmation's own buttons and the optimize form's Cancel do not.
+ * Whether a control can be used. Everything that starts or toggles work, including the delete
+ * confirmation, waits for the request in flight; only the optimize form's Cancel does not,
+ * since it is how that request is stopped.
  */
 export function controlEnabled(state: BuilderState, control: BuilderControl, deleting = false) {
   if (state.busy !== null) return false;
-  if (control === "delete") return !deleting;
+  if (control === "delete" || control === "confirmDelete") return !deleting;
   if (control === "runTest") return state.testTool !== "";
   return true;
 }
@@ -203,8 +214,7 @@ export function busyKeys(state: BuilderState) {
     validate: state.busy === "validate" ? "policies.validating" : "policies.validate",
     activate:
       state.busy === "activate" ? "policies.activating" : state.confirmRisk ? "policies.confirmActivate" : "policies.activate",
-    // There is no "testing" string; a running test reuses "Validating…".
-    runTest: state.busy === "test" ? "policies.validating" : "policies.runTest",
+    runTest: state.busy === "test" ? "policies.testing" : "policies.runTest",
   };
 }
 
@@ -218,11 +228,32 @@ export function isActivateConflict(caught: unknown) {
   return caught instanceof ApiError && caught.status === 409;
 }
 
+/** The JSON editor's text could not be read as a policy. A SyntaxError so older checks still match. */
+export class PolicyJsonError extends SyntaxError {
+  constructor() {
+    super("policy");
+    this.name = "PolicyJsonError";
+  }
+}
+
+/** The JSON editor's text as a policy definition; throws PolicyJsonError when it is not one. */
+export function readPolicyJson(text: string): PolicyDefinition {
+  let parsed: PolicyDefinition;
+  try {
+    parsed = JSON.parse(text) as PolicyDefinition;
+  } catch {
+    throw new PolicyJsonError();
+  }
+  if (!parsed || !Array.isArray(parsed.nodes) || !Array.isArray(parsed.edges)) throw new PolicyJsonError();
+  return parsed;
+}
+
 /**
- * The message shown when a request fails. A SyntaxError is unreadable JSON: the policy text for
- * save and optimize, the arguments for a test. Validate and activate have no JSON message.
+ * The message shown when a request fails. Unreadable policy JSON says so whichever request hit
+ * it; any other SyntaxError is the test arguments for a test, and a stream reply for optimize.
  */
 export function failureMessage(caught: unknown, busy: BuilderBusy, t: (path: string) => string) {
+  if (caught instanceof PolicyJsonError) return t("policies.jsonInvalid");
   if (caught instanceof SyntaxError) {
     if (busy === "save" || busy === "optimize") return t("policies.jsonInvalid");
     if (busy === "test") return t("policies.badJson");

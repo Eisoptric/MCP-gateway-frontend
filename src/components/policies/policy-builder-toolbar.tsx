@@ -93,10 +93,15 @@ export function PolicyBuilderToolbar({
           </Button>
           {confirmingDelete ? (
             <>
-              <Button type="button" variant="outline" onClick={() => setConfirmingDelete(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={!controlEnabled(state, "cancelDelete")}
+                onClick={() => setConfirmingDelete(false)}
+              >
                 {t("policies.cancel")}
               </Button>
-              <Button type="button" variant="destructive" disabled={deleting} onClick={onDelete}>
+              <Button type="button" variant="destructive" disabled={!controlEnabled(state, "confirmDelete", deleting)} onClick={onDelete}>
                 {t("policies.confirmDelete")}
               </Button>
             </>
@@ -142,7 +147,7 @@ export function PolicyOptimizeForm({ builder }: { builder: PolicyBuilderSession 
         <Button type="submit" disabled={!controlEnabled(state, "sendOptimize")}>
           {t(busyKeys(state).sendOptimize)}
         </Button>
-        <Button type="button" variant="outline" onClick={() => dispatch({ type: "closeOptimize" })}>
+        <Button type="button" variant="outline" onClick={builder.cancelOptimize}>
           {t("policies.cancel")}
         </Button>
       </div>

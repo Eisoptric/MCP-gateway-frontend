@@ -478,6 +478,7 @@ export const zh: Messages = {
     flagHiddenCharacters: "含隱藏字元",
     validate: "驗證",
     validating: "驗證中…",
+    testing: "測試中…",
     test: "測試",
     runTest: "執行",
     library: "節點",
