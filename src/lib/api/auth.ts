@@ -256,11 +256,15 @@ export function disableEmailMfa() {
   return del("/auth/mfa/email");
 }
 
-/** With an authenticator app on the account, step-up also needs its code (ApiError.secondFactor says so). */
-export async function reauthenticate(password: string, totpCode?: string) {
+/**
+ * With an authenticator app on the account, step-up also needs its code; with emailed sign-in
+ * codes, the emailed code (ApiError.secondFactor says which).
+ */
+export async function reauthenticate(password: string, totpCode?: string, emailCode?: string) {
   return post<void>("/auth/reauth", {
     password: await loginVerifier(password, signedInEmail()),
     ...(totpCode ? { totp_code: totpCode } : {}),
+    ...(emailCode ? { code: emailCode } : {}),
   });
 }
 

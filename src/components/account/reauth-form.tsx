@@ -31,13 +31,18 @@ export function ReauthForm({ onReady, busy }: { onReady: () => void; busy?: bool
     setError("");
     setPending(true);
     const second = secondFactor === "totp" ? totpCode.trim() : undefined;
+    const emailed = code.length === 6 ? code : undefined;
     try {
-      if (code.length === 6) await reauthenticateWithCode(code, second);
+      // An account that signs in with emailed codes needs the password and the code together.
+      if (password && (emailed || secondFactor === "email")) await reauthenticate(password, second, emailed);
+      else if (emailed) await reauthenticateWithCode(emailed, second);
       else await reauthenticate(password, second);
       onReady();
     } catch (err) {
       if (err instanceof ApiError && err.secondFactor) {
         setSecondFactor(err.secondFactor);
+        // The API emails the code once the password is right; show where to enter it.
+        if (err.secondFactor === "email") setSent(true);
         setError("");
       } else {
         setError(err instanceof ApiError ? err.message : t("common.apiError"));
@@ -87,6 +92,9 @@ export function ReauthForm({ onReady, busy }: { onReady: () => void; busy?: bool
           className={fieldClass}
         />
       </label>
+      {secondFactor === "email" ? (
+        <p role="status" className="mt-3 text-[13px] text-muted-foreground">{t("profile.reauthEmailBody")}</p>
+      ) : null}
       {sent ? (
         <label className="mt-3 block text-[12px] text-muted-foreground">
           {t("profile.reauthCode")}
@@ -125,6 +133,7 @@ export function ReauthForm({ onReady, busy }: { onReady: () => void; busy?: bool
             pending ||
             busy ||
             (!password && code.length !== 6) ||
+            (secondFactor === "email" && (!password || code.length !== 6)) ||
             secondFactor === "passkey" ||
             (secondFactor === "totp" && !totpCode.trim())
           }

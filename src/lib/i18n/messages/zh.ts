@@ -920,6 +920,7 @@ export const zh: Messages = {
     reauthTotpBody: "此帳號使用驗證器 App。請輸入 6 位數代碼或一組備援碼後再繼續。",
     reauthTotpCode: "驗證器代碼或備援碼",
     reauthPasskeyBody: "此帳號需以 Passkey 確認身分。請使用 Passkey 繼續。",
+    reauthEmailBody: "此帳號登入時使用電子郵件驗證碼。請輸入目前密碼和寄給你的驗證碼後再繼續。",
     emailChangeBody: "請輸入寄到目前信箱的驗證碼，以及寄到新信箱的驗證碼。",
     currentCode: "目前信箱的驗證碼",
     nextCode: "新信箱的驗證碼",

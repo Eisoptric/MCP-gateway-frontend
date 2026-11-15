@@ -2,8 +2,8 @@ import { useAuthStore } from "@/lib/auth";
 
 export const API_BASE = "/saturn-api";
 
-/** The second factor a step-up asked for: an authenticator code, or the passkey itself. */
-export type SecondFactor = "totp" | "passkey";
+/** The second factor a step-up asked for: an authenticator code, an emailed code, or the passkey itself. */
+export type SecondFactor = "totp" | "email" | "passkey";
 
 export class ApiError extends Error {
   status: number;
@@ -38,7 +38,7 @@ function migrationFrom(detail: unknown): "v1" | "password" | undefined {
 function secondFactorFrom(detail: unknown): SecondFactor | undefined {
   if (!detail || typeof detail !== "object" || Array.isArray(detail)) return undefined;
   const value = (detail as { second_factor?: unknown }).second_factor;
-  return value === "totp" || value === "passkey" ? value : undefined;
+  return value === "totp" || value === "email" || value === "passkey" ? value : undefined;
 }
 
 export async function apiErrorMessage(
