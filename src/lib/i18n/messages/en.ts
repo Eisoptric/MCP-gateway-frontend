@@ -485,6 +485,7 @@ export const en = {
     flagHiddenCharacters: "hidden characters",
     validate: "Validate",
     validating: "Validating…",
+    testing: "Testing…",
     test: "Test",
     runTest: "Run",
     library: "Nodes",
