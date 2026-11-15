@@ -18,6 +18,53 @@ export function loadMessages(locale: Locale): Promise<void> {
   return loading[locale];
 }
 
+/**
+ * Loads the chosen language, or the other one when the chosen one cannot be downloaded (an old
+ * chunk gone after a deploy, say), so the page shows in some language instead of none.
+ * Resolves with the language that loaded.
+ */
+export async function loadEither(
+  locale: Locale,
+  load: (locale: Locale) => Promise<void> = loadMessages
+): Promise<Locale> {
+  try {
+    await load(locale);
+    return locale;
+  } catch {
+    const other: Locale = locale === "en" ? "zh" : "en";
+    await load(other);
+    return other;
+  }
+}
+
+const RELOAD_FLAG = "saturn-i18n-reload";
+type FlagStorage = Pick<Storage, "getItem" | "setItem" | "removeItem">;
+
+/**
+ * Reloads the page unless this tab already did so for missing messages. Returns whether it did.
+ * The flag stops a reload loop when the fresh page cannot load them either.
+ */
+export function reloadOnce(storage: () => FlagStorage, reload: () => void): boolean {
+  try {
+    if (storage().getItem(RELOAD_FLAG)) return false;
+    storage().setItem(RELOAD_FLAG, "1");
+  } catch {
+    // Without storage a second reload cannot be told from the first, so none is tried.
+    return false;
+  }
+  reload();
+  return true;
+}
+
+/** Messages loaded, so a later failure (after the next deploy) may reload again. */
+export function forgetReload(storage: () => FlagStorage) {
+  try {
+    storage().removeItem(RELOAD_FLAG);
+  } catch {
+    // Nothing was stored then.
+  }
+}
+
 export function messagesLoaded(locale: Locale): boolean {
   return loaded[locale] !== undefined;
 }

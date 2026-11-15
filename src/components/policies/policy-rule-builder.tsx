@@ -122,7 +122,7 @@ export function PolicyRuleBuilder({
         </Button>
       </div>
       <div className="mt-6 saturn-label">{t("policies.then")}</div>
-      <select aria-label={t("policies.decision")}
+      <select aria-label={t("policies.kind.decision")}
         value={rule.decision}
         onChange={(event) =>
           onChange({ ...rule, decision: event.target.value as PolicyAction })

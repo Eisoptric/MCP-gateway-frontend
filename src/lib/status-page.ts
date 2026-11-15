@@ -64,7 +64,8 @@ export function timeline(to: string, days: number, recorded: { day: string; upti
 
 /**
  * The console is listed first and is always up: this page is served by it. The API is down
- * when its report cannot be fetched at all, and then nothing is known about what is behind it.
+ * when its report cannot be fetched at all or does not arrive in time, and then nothing is
+ * known about what is behind it.
  */
 export function componentRows(
   phase: Phase,

@@ -41,12 +41,14 @@ export function ApprovalPanel({
   open,
   onOpenChange,
   onResolve,
+  canWrite,
   resolving = false,
 }: {
   approval: Approval | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onResolve: (decision: "approved" | "rejected") => void;
+  canWrite: boolean;
   resolving?: boolean;
 }) {
   const { t, locale } = useI18n();
@@ -196,31 +198,35 @@ export function ApprovalPanel({
           ) : null}
         </div>
 
-        <div className="flex items-center justify-end gap-2 border-t border-border px-6 py-4">
-          {pending ? (
-            <>
-              <Button
-                variant="outline"
-                disabled={resolving}
-                onClick={() => onResolve("rejected")}
-              >
-                {t("approvals.reject")}
-              </Button>
-              <Button disabled={resolving} onClick={() => onResolve("approved")}>
-                {t("approvals.approve")}
-              </Button>
-            </>
-          ) : (
-            <div className="text-[12px] text-muted-foreground">
-              {t(
-                approval.status === "approved"
-                  ? "approvals.approvedBy"
-                  : "approvals.rejectedBy",
-                { name: approval.resolvedBy ?? "" }
-              )}
-            </div>
-          )}
-        </div>
+        {/* Same gate as the approval cards: only members who may decide get the buttons. */}
+        {pending && !canWrite ? null : (
+          <div className="flex items-center justify-end gap-2 border-t border-border px-6 py-4">
+            {pending ? (
+              <>
+                <Button
+                  variant="outline"
+                  disabled={resolving}
+                  onClick={() => onResolve("rejected")}
+                >
+                  {t("approvals.reject")}
+                </Button>
+                <Button disabled={resolving} onClick={() => onResolve("approved")}>
+                  {t("approvals.approve")}
+                </Button>
+              </>
+            ) : (
+              <div className="text-[12px] text-muted-foreground">
+                {/* Only approvals and rejections have a person behind them. Expired, cancelled
+                    and invalidated ones are closed by the system. */}
+                {approval.status === "approved" || approval.status === "rejected"
+                  ? t(approval.status === "approved" ? "approvals.approvedBy" : "approvals.rejectedBy", {
+                      name: approval.resolvedBy ?? "",
+                    })
+                  : t(approvalStatusKey(approval))}
+              </div>
+            )}
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );

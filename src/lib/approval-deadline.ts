@@ -19,6 +19,8 @@ export function approvalStatusKey(approval: Approval) {
   if (approval.status === "expired") return "approvals.expiredPending";
   if (approval.status === "rejected") return "approvals.rejected";
   if (approval.status === "approved") return "approvals.approved";
+  if (approval.status === "cancelled") return "approvals.cancelled";
+  if (approval.status === "invalidated") return "approvals.invalidated";
   return "approvals.pending";
 }
 

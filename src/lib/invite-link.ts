@@ -6,8 +6,8 @@ export interface InviteLink {
 /**
  * The token and address carried by an invite link.
  *
- * The emailed link has them in the query string today. The fragment is read first, so the link
- * can move to "#token=…&email=…": a fragment is never sent to a server or written to its logs.
+ * Links carry them after "#", which is never sent to a server or written to its logs. Links
+ * emailed before the API moved them there have them in the query string, so that is read too.
  */
 export function readInviteLink(search: string, hash: string): InviteLink {
   const fragment = new URLSearchParams(hash.replace(/^#/, ""));

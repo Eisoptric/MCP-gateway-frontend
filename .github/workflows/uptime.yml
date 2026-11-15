@@ -1,0 +1,36 @@
+name: Uptime
+
+# A free outside check of the console in production. Actions minutes are free for public
+# repositories. A failed scheduled run emails whoever last changed this schedule, so a failure
+# here is the alert. GitHub may start a scheduled run some minutes late, and it turns schedules
+# off in a repository with no activity for 60 days: re-enable it under Actions if that happens.
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: uptime
+  cancel-in-progress: false
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: GET /health
+        env:
+          URL: https://dashboard.saturn-core.com/health
+        run: |
+          # Three tries a minute apart, so one slow cold start is not reported as an outage.
+          for attempt in 1 2 3; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 "$URL" || true)
+            echo "attempt $attempt: HTTP $code"
+            if [ "$code" = "200" ]; then exit 0; fi
+            [ "$attempt" = 3 ] || sleep 60
+          done
+          echo "::error::$URL did not answer 200 in three tries"
+          exit 1

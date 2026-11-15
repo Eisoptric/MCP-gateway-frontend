@@ -15,10 +15,12 @@ test("a sign-in counts as done only when the API holds a working authorization f
   assert.equal(mcpSignInCompleted([server({ name: "Notion", endpoint: "https://mcp.notion.com/mcp" })], wanted), false);
 });
 
-test("the server is matched by name, or by endpoint when the API tidied the name", () => {
+test("the server is matched by name only, since the API keys servers by name", () => {
   assert.equal(mcpSignInCompleted([server({ name: " Linear " })], wanted), true);
-  assert.equal(mcpSignInCompleted([server({ name: "Linear (2)", endpoint: "https://mcp.linear.app/mcp/" })], wanted), true);
   assert.equal(mcpSignInCompleted([server({ endpoint: "https://elsewhere.example/mcp" })], wanted), true);
+  // The same endpoint signed in under another name does not mean this sign-in went through.
+  assert.equal(mcpSignInCompleted([server({ name: "Linear (2)" })], wanted), false);
+  assert.equal(mcpSignInCompleted([server({ name: "Linear (2)", endpoint: "https://mcp.linear.app/mcp/" })], wanted), false);
 });
 
 test("each way a sign-in can fail has its own message", () => {

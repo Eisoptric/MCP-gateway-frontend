@@ -64,6 +64,7 @@ export function ApprovalsScreen({ mode }: { mode: "approve" | "resubmit" }) {
         <ApprovalPanel
           approval={active}
           open={Boolean(active)}
+          canWrite={canWrite}
           resolving={resolveApproval.isPending}
           onOpenChange={(open) => {
             if (!open) setActiveId(null);

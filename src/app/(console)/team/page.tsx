@@ -179,7 +179,8 @@ export default function TeamPage() {
             {inviteToken ? (
               <p className="mt-4 break-all rounded-lg bg-muted px-3 py-2 font-mono text-[12px] text-muted-foreground">
                 {t("team.inviteLink")}{" "}
-                {`/accept-invite?token=${encodeURIComponent(inviteToken)}&email=${encodeURIComponent(invitedEmail)}`}
+                {/* After "#", so opening the link never sends the token to a server. */}
+                {`/accept-invite#token=${encodeURIComponent(inviteToken)}&email=${encodeURIComponent(invitedEmail)}`}
               </p>
             ) : null}
           </form>
