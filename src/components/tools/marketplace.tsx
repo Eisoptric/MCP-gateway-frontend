@@ -1,13 +1,14 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { consoleQueryKey } from "@/hooks/use-console";
 import { connectMcpServer } from "@/lib/api";
-import { authorizeMcp, mcpOauthErrorText } from "@/lib/mcp-authorize";
+import { useMcpSignIn } from "@/hooks/use-mcp-sign-in";
 import { useI18n } from "@/lib/i18n";
 import { MarketIcon } from "@/components/tools/market-icon";
+import { McpSignInStatus } from "@/components/tools/mcp-sign-in-status";
 import { marketCatalog, marketCategories, marketName, type MarketCategory, type MarketEntry } from "@/lib/marketplace";
 import { cn } from "@/lib/utils";
 import { detailPanelClass } from "@/components/layout/mobile-nav";
@@ -29,7 +30,7 @@ export function Marketplace({ servers, canAdmin }: { servers: McpServer[]; canAd
   const [tab, setTab] = useState<"overview" | "setup">("overview");
   const [busyId, setBusyId] = useState<string | null>(null);
   const [connectError, setConnectError] = useState("");
-  const client = useQueryClient();
+  const signIn = useMcpSignIn();
 
   const needle = query.trim().toLowerCase();
   const visible = useMemo(
@@ -70,15 +71,18 @@ export function Marketplace({ servers, canAdmin }: { servers: McpServer[]; canAd
     }
     setConnectError("");
     setBusyId(entry.id);
-    try {
-      await authorizeMcp({ name: marketName(entry.id), endpoint: entry.endpoint });
-      await client.invalidateQueries({ queryKey: consoleQueryKey });
-    } catch (error) {
+    const message = await signIn.start({ name: marketName(entry.id), endpoint: entry.endpoint });
+    if (message === null) return;
+    setBusyId(null);
+    if (message) {
       open(entry, "setup");
-      setConnectError(mcpOauthErrorText(error, { popup: t("marketplace.popupBlocked"), signInUnavailable: t("marketplace.signInUnavailable"), incomplete: t("marketplace.signInIncomplete") }));
-    } finally {
-      setBusyId(null);
+      setConnectError(message);
     }
+  }
+
+  function signInStatus(entry: MarketEntry): ReactNode {
+    if (busyId !== entry.id) return null;
+    return <McpSignInStatus phase={signIn.phase} onCancel={signIn.cancel} onRetry={() => void connectEntry(entry)} />;
   }
 
   return (
@@ -153,6 +157,7 @@ export function Marketplace({ servers, canAdmin }: { servers: McpServer[]; canAd
                   onOpen={() => open(entry)}
                   onConnect={() => void connectEntry(entry)}
                   busy={busyId === entry.id}
+                  waiting={signInStatus(entry)}
                 />
               ))}
             </ul>
@@ -176,6 +181,7 @@ export function Marketplace({ servers, canAdmin }: { servers: McpServer[]; canAd
                     onOpen={() => open(entry)}
                     onConnect={() => void connectEntry(entry)}
                     busy={busyId === entry.id}
+                    waiting={signInStatus(entry)}
                   />
                 ))}
               </ul>
@@ -222,6 +228,7 @@ export function Marketplace({ servers, canAdmin }: { servers: McpServer[]; canAd
               onTab={setTab}
               canAdmin={canAdmin}
               busy={busyId === selected.id}
+              waiting={signInStatus(selected)}
               connectError={connectError}
               onConnect={() => void connectEntry(selected)}
               linked={servers.find((server) => selected.endpoint && sameEndpoint(server.endpoint, selected.endpoint)) ?? null}
@@ -256,6 +263,7 @@ function MarketCard({
   selected,
   connected,
   busy,
+  waiting,
   onOpen,
   onConnect,
 }: {
@@ -264,6 +272,7 @@ function MarketCard({
   selected: boolean;
   connected: boolean;
   busy: boolean;
+  waiting: ReactNode;
   onOpen: () => void;
   onConnect: () => void;
 }) {
@@ -290,6 +299,7 @@ function MarketCard({
             {busy ? t("marketplace.authorizing") : t("tools.connectAction")}
           </Button>
         )}
+        {waiting ? <div className="mt-2">{waiting}</div> : null}
       </div>
     </li>
   );
@@ -302,6 +312,7 @@ function Detail({
   onTab,
   canAdmin,
   busy,
+  waiting,
   connectError,
   onConnect,
   linked,
@@ -312,6 +323,7 @@ function Detail({
   onTab: (tab: "overview" | "setup") => void;
   canAdmin: boolean;
   busy: boolean;
+  waiting: ReactNode;
   connectError: string;
   onConnect: () => void;
   linked: McpServer | null;
@@ -374,6 +386,7 @@ function Detail({
           auth={entry.auth}
           lockedEndpoint={Boolean(entry.endpoint)}
           busy={busy}
+          waiting={waiting}
           connectError={connectError}
           onAuthorize={entry.endpoint ? onConnect : undefined}
         />
@@ -389,6 +402,7 @@ function ConnectForm({
   auth = "token",
   lockedEndpoint = false,
   busy = false,
+  waiting = null,
   connectError = "",
   onAuthorize,
 }: {
@@ -398,6 +412,7 @@ function ConnectForm({
   auth?: "token" | "optional";
   lockedEndpoint?: boolean;
   busy?: boolean;
+  waiting?: ReactNode;
   connectError?: string;
   onAuthorize?: () => void;
 }) {
@@ -414,7 +429,7 @@ function ConnectForm({
     if (connectError === t("marketplace.signInUnavailable")) setPaste(true);
   }
   const [localError, setLocalError] = useState("");
-  const [authorizing, setAuthorizing] = useState(false);
+  const signIn = useMcpSignIn();
   const connect = useMutation({
     mutationFn: () =>
       connectMcpServer({
@@ -436,24 +451,17 @@ function ConnectForm({
       onAuthorize();
       return;
     }
-    setAuthorizing(true);
-    try {
-      await authorizeMcp({ name: name.trim(), endpoint: endpoint.trim() });
-      await client.invalidateQueries({ queryKey: consoleQueryKey });
-    } catch (error) {
-      const message = mcpOauthErrorText(error, { popup: t("marketplace.popupBlocked"), signInUnavailable: t("marketplace.signInUnavailable"), incomplete: t("marketplace.signInIncomplete") });
-      if (message === t("marketplace.signInUnavailable")) setPaste(true);
-      setLocalError(message);
-    } finally {
-      setAuthorizing(false);
-    }
+    const message = await signIn.start({ name: name.trim(), endpoint: endpoint.trim() });
+    if (!message) return;
+    if (message === t("marketplace.signInUnavailable")) setPaste(true);
+    setLocalError(message);
   }
 
   if (!canAdmin) {
     return <p className="px-5 py-5 text-[13px] text-muted-foreground">{t("marketplace.adminOnly")}</p>;
   }
 
-  const pending = busy || authorizing;
+  const pending = busy || signIn.pending;
   const shownError = localError || connectError;
 
   return (
@@ -502,6 +510,11 @@ function ConnectForm({
       <Button type="submit" disabled={pending || connect.isPending || !ready || (paste && auth !== "optional" && !token.trim())}>
         {pending ? t("marketplace.authorizing") : connect.isSuccess ? t("marketplace.already") : t("tools.connectAction")}
       </Button>
+      {signIn.pending ? (
+        <McpSignInStatus phase={signIn.phase} onCancel={signIn.cancel} onRetry={() => void authorize()} />
+      ) : (
+        waiting
+      )}
       <button type="button" className="block text-[12px] text-muted-foreground underline" onClick={() => setPaste((current) => !current)}>
         {paste ? t("marketplace.useProvider") : t("marketplace.pasteInstead")}
       </button>
