@@ -20,19 +20,18 @@ export function mcpOauthErrorText(
   return error instanceof Error ? error.message : labels.popup;
 }
 
-function withoutTrailingSlash(url: string) {
-  return url.trim().replace(/\/+$/, "");
-}
-
-/** Whether the API now holds a working authorization for this server. The API keys servers by name. */
+/**
+ * Whether the API now holds a working authorization for this server. The API keys servers by
+ * name, so only the name counts: the same endpoint already signed in under another name says
+ * nothing about this sign-in.
+ */
 export function mcpSignInCompleted(
-  servers: Pick<ApiMcpServer, "name" | "endpoint" | "has_authorization" | "secret_status">[],
-  wanted: { name: string; endpoint: string }
+  servers: Pick<ApiMcpServer, "name" | "has_authorization" | "secret_status">[],
+  wanted: { name: string }
 ): boolean {
   return servers.some(
     (server) =>
-      (server.name.trim() === wanted.name.trim() ||
-        withoutTrailingSlash(server.endpoint) === withoutTrailingSlash(wanted.endpoint)) &&
+      server.name.trim() === wanted.name.trim() &&
       server.has_authorization === true &&
       server.secret_status !== "needs_reconnect"
   );

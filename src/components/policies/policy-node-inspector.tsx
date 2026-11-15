@@ -91,7 +91,7 @@ export function NodeInspector({
         <ConditionFields data={data} fields={fields} hasTool={hasTool} disabled={disabled} onChange={onChange} />
       ) : null}
       {data.kind === "logic" ? (
-        <select aria-label={t("policies.logic")} disabled={disabled} value={data.op ?? "and"} onChange={(event) => onChange({ op: event.target.value as FlowData["op"] })} className={inputClass}>
+        <select aria-label={t("policies.kind.logic")} disabled={disabled} value={data.op ?? "and"} onChange={(event) => onChange({ op: event.target.value as FlowData["op"] })} className={inputClass}>
           <option value="and">AND</option>
           <option value="or">OR</option>
           <option value="not">NOT</option>
@@ -99,7 +99,7 @@ export function NodeInspector({
       ) : null}
       {data.kind === "decision" ? (
         <>
-        <select aria-label={t("policies.decision")}
+        <select aria-label={t("policies.kind.decision")}
           disabled={disabled}
           value={data.decision ?? "deny"}
           onChange={(event) => {

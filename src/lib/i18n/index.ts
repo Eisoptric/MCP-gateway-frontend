@@ -1,7 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { loadMessages, lookup, translate } from "@/lib/i18n/catalog";
+import { forgetReload, loadEither, lookup, reloadOnce, translate } from "@/lib/i18n/catalog";
 import type { Locale } from "@/lib/i18n/messages";
 import { updateAccountLocale } from "@/lib/api";
 import { useAuthStore } from "@/stores/auth-store";
@@ -22,16 +22,26 @@ export { translate };
 let shown: Locale | null = null;
 const listeners = new Set<() => void>();
 const RETRY_MS = 2000;
+// Rounds in which neither language downloaded before the page is reloaded.
+const RELOAD_AFTER = 2;
+let failedRounds = 0;
+const tabStorage = () => window.sessionStorage;
 
 function show(locale: Locale) {
-  loadMessages(locale).then(
-    () => {
+  loadEither(locale).then(
+    (loaded) => {
+      failedRounds = 0;
+      forgetReload(tabStorage);
       // A later choice may have replaced this one while it was loading.
       if (useLocaleStore.getState().locale !== locale) return;
-      shown = locale;
+      shown = loaded;
       for (const listener of listeners) listener();
     },
     () => {
+      failedRounds += 1;
+      // Neither language downloads: most likely this page predates the live deploy and names
+      // chunks that are gone. A fresh copy names the current ones.
+      if (failedRounds >= RELOAD_AFTER && reloadOnce(tabStorage, () => window.location.reload())) return;
       window.setTimeout(() => {
         if (useLocaleStore.getState().locale === locale) show(locale);
       }, RETRY_MS);

@@ -45,7 +45,7 @@ function nodeTitle(data: FlowData, agents: Agent[], t: (path: string) => string)
   }
   if (data.kind === "tool") return data.tool || t("policies.capability");
   if (data.kind === "condition") {
-    return [data.field, data.operator, data.value].filter((item) => item !== "" && item != null).join(" ") || t("policies.condition");
+    return [data.field, data.operator, data.value].filter((item) => item !== "" && item != null).join(" ") || t("policies.kind.condition");
   }
   if (data.kind === "logic") return (data.op ?? "and").toUpperCase();
   if (data.kind === "decision") {
@@ -53,7 +53,7 @@ function nodeTitle(data: FlowData, agents: Agent[], t: (path: string) => string)
     if (data.decision === "approval") return t("policies.action.approval");
     return t("policies.action.deny");
   }
-  return data.rateLimit ? `${t("policies.rateLimit")} ${data.rateLimit}` : t("policies.enforcement");
+  return data.rateLimit ? `${t("policies.rateLimit")} ${data.rateLimit}` : t("policies.kind.enforcement");
 }
 
 function PolicyNodeView({ data, selected }: NodeProps<FlowNode>) {

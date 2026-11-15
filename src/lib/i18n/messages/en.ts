@@ -621,6 +621,8 @@ export const en = {
     awaitingResubmit: "Waiting for resubmit",
     expiredPending: "Expired before approval",
     expiredResubmit: "Expired before resubmit",
+    cancelled: "Cancelled",
+    invalidated: "Closed after a policy change",
     notExecuted: "Approval does not mean the tool has run.",
     deadline: "Deadline",
     approvedAt: "Approved",

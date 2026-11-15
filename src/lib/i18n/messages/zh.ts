@@ -614,6 +614,8 @@ export const zh: Messages = {
     awaitingResubmit: "等待重送",
     expiredPending: "核准前已過期",
     expiredResubmit: "重送前已過期",
+    cancelled: "已取消",
+    invalidated: "政策變更後已失效",
     notExecuted: "核准不代表工具已經執行。",
     deadline: "期限",
     approvedAt: "核准時間",
