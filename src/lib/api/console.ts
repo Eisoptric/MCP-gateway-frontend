@@ -1,8 +1,9 @@
 import type { ApiAgentSettings } from "@/lib/agent-config";
-import { mapConsole } from "@/lib/mappers";
-import type { Agent, ConsoleData, Integration, Policy } from "@/types";
+import { pagePath } from "@/lib/activity-pages";
+import { mapActivityEvents, mapConsole } from "@/lib/mappers";
+import type { ActivityEvent, Agent, ConsoleData, Integration, Policy } from "@/types";
 import type { ApiMcpServer, ApiToolSet } from "./mcp";
-import { del, get, patch, post } from "./transport";
+import { del, get, getPage, patch, post } from "./transport";
 import type { ApiActivity, ApiAgent, ApiApproval, ApiHealth, ApiPolicy, ApiTool } from "./types";
 
 export async function fetchConsole(): Promise<ConsoleData> {
@@ -12,7 +13,7 @@ export async function fetchConsole(): Promise<ConsoleData> {
       get<ApiTool[]>("/tools"),
       get<ApiPolicy[]>("/policies"),
       get<ApiApproval[]>("/approvals"),
-      get<ApiActivity[]>("/activity"),
+      getPage<ApiActivity>("/activity"),
       // The service report is extra information. The console still loads when it cannot be read,
       // for instance against an API that does not serve /status yet.
       get<ApiHealth>("/status").catch(() => undefined),
@@ -25,7 +26,8 @@ export async function fetchConsole(): Promise<ConsoleData> {
     tools,
     policies,
     approvals,
-    activity,
+    activity: activity.items,
+    activityNext: activity.next,
     health,
     mcpServers: mcpServers ?? [],
     toolSets: toolSets ?? [],
@@ -107,16 +109,31 @@ export async function rejectApproval(approvalId: string) {
   );
 }
 
+const ACTIVITY_PAGE = 500;
+
+/** One older page of the audit log, after `cursor`, mapped the way the console shows events. */
+export async function fetchOlderActivity(
+  cursor: string,
+  agents: Pick<Agent, "id" | "name">[]
+): Promise<{ items: ActivityEvent[]; next: string | null }> {
+  const page = await getPage<ApiActivity>(pagePath("/activity", ACTIVITY_PAGE, cursor));
+  return { items: mapActivityEvents(page.items, agents), next: page.next };
+}
+
 const EXPORT_PAGE = 5000;
 const EXPORT_MAX_PAGES = 40;
 
-/** The export is paged on the server. Read pages until a short one arrives. */
+/** The export is paged on the server. Follow the cursor until the last page. */
 export async function exportActivity() {
   const rows: unknown[] = [];
+  let cursor: string | null = null;
   for (let page = 0; page < EXPORT_MAX_PAGES; page += 1) {
-    const batch = await get<unknown[]>(`/activity/export?limit=${EXPORT_PAGE}&offset=${page * EXPORT_PAGE}`);
-    rows.push(...batch);
-    if (batch.length < EXPORT_PAGE) break;
+    const batch: { items: unknown[]; next: string | null } = await getPage<unknown>(
+      pagePath("/activity/export", EXPORT_PAGE, cursor)
+    );
+    rows.push(...batch.items);
+    cursor = batch.next;
+    if (!cursor) break;
   }
   return rows;
 }

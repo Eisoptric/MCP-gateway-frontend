@@ -318,5 +318,7 @@ export interface ConsoleData {
   runs: AgentRun[];
   approvals: Approval[];
   events: ActivityEvent[];
+  /** Cursor for the audit events older than `events`; null when there are none. */
+  activityNext: string | null;
   services: SystemService[];
 }
