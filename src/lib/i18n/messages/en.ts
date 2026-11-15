@@ -843,6 +843,7 @@ export const en = {
     payloadSaved: "I have saved the recovery key",
     payloadRecovery: "Recovery key",
     payloadUnlock: "Unlock with recovery key",
+    payloadHistoricalNote: "A member who already exported the organization private key keeps that copy after revocation.",
     payloadActive: "Active key version",
     ownFingerprint: "Your key fingerprint",
     ownFingerprintHint: "This identifies the encryption key this browser holds for you. When an admin or a colleague is asked to approve it or to help you regain access, read it to them and check that it matches what their screen shows.",

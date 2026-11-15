@@ -28,6 +28,7 @@ export default function ProfilePage() {
   const [saved, setSaved] = useState(false);
   const [needsReauth, setNeedsReauth] = useState(false);
   const [pendingEmail, setPendingEmail] = useState("");
+  const [savingProfile, setSavingProfile] = useState(false);
   const [currentCode, setCurrentCode] = useState("");
   const [nextCode, setNextCode] = useState("");
   const [emailPassword, setEmailPassword] = useState("");
@@ -44,7 +45,9 @@ export default function ProfilePage() {
   if (user !== shownUser || pendingEmail !== shownPending) {
     setShownUser(user);
     setShownPending(pendingEmail);
-    if (user && !pendingEmail) {
+    // Not while a save is in flight: the account refreshes before the save's reply arrives, and
+    // resetting the field then lost the address the person had just asked to change to.
+    if (user && !pendingEmail && !savingProfile) {
       setName(user.name);
       setEmail(user.email);
     }
@@ -55,11 +58,15 @@ export default function ProfilePage() {
   });
 
   const save = useMutation({
-    mutationFn: () => updateProfile({ name: name.trim(), email: email.trim() }),
-    onSuccess: (next) => {
+    mutationFn: (values: { name: string; email: string }) => updateProfile(values),
+    onMutate: () => setSavingProfile(true),
+    onSettled: () => setSavingProfile(false),
+    onSuccess: (next, values) => {
       setNeedsReauth(false);
       if (next.email_change_pending) {
-        setPendingEmail(email.trim());
+        // The address that was sent, not whatever the field shows now. Confirming derives the new
+        // stored password value from it; the old address there locks the person out.
+        setPendingEmail(values.email);
         setSaved(false);
         return;
       }
@@ -96,7 +103,7 @@ export default function ProfilePage() {
     event.preventDefault();
     if (!name.trim() || !email.trim()) return;
     setSaved(false);
-    save.mutate();
+    save.mutate({ name: name.trim(), email: email.trim() });
   }
 
   function submitPassword(event: FormEvent) {
@@ -194,7 +201,7 @@ export default function ProfilePage() {
             ) : null}
           </div>
         ) : null}
-        {needsReauth ? <ReauthForm busy={save.isPending} onReady={() => save.mutate()} /> : null}
+        {needsReauth ? <ReauthForm busy={save.isPending} onReady={() => save.mutate({ name: name.trim(), email: email.trim() })} /> : null}
         <div className="mt-4 flex items-center gap-3">
           <Button type="submit" disabled={save.isPending || !name.trim() || !email.trim()}>
             {t("profile.save")}

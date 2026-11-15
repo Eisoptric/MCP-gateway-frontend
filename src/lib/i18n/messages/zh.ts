@@ -836,6 +836,7 @@ export const zh: Messages = {
     payloadSaved: "我已保存復原金鑰",
     payloadRecovery: "復原金鑰",
     payloadUnlock: "用復原金鑰解鎖",
+    payloadHistoricalNote: "已經匯出組織私鑰的成員，在被撤銷之後仍保有那份副本。",
     payloadActive: "使用中的金鑰版本",
     ownFingerprint: "你的金鑰指紋",
     ownFingerprintHint: "這是這個瀏覽器為你持有的加密金鑰的識別碼。當管理員或同事被要求核准你的金鑰，或協助你恢復存取時，請把它唸給對方聽，並確認與對方畫面上顯示的一致。",
