@@ -24,6 +24,8 @@ test("a step-up that needs a second factor says which one", async () => {
   assert.deepEqual(totp, { message: "Enter the code from your authenticator app", migration: undefined, secondFactor: "totp" });
   const passkey = await apiErrorMessage(json(403, { detail: { message: "Confirm with your passkey", second_factor: "passkey" } }));
   assert.equal(passkey.secondFactor, "passkey");
+  const email = await apiErrorMessage(json(403, { detail: { message: "Enter the code we emailed you", second_factor: "email" } }));
+  assert.equal(email.secondFactor, "email");
   // Anything else is not a second factor the form knows how to ask for.
   assert.equal((await apiErrorMessage(json(403, { detail: { message: "x", second_factor: "sms" } }))).secondFactor, undefined);
   assert.equal((await apiErrorMessage(json(403, { detail: "Reauthentication required" }))).secondFactor, undefined);
@@ -38,6 +40,18 @@ test("the step-up sends the authenticator code with the password, and rejects wi
   await reauthenticate("correct horse", "123456");
   assert.equal(sent[0].url, "/saturn-api/auth/reauth");
   assert.equal(sent[0].body.totp_code, "123456");
+  assert.match(sent[0].body.password, /^v2\./);
+});
+
+test("an account with emailed codes sends the code with the password at step-up", async () => {
+  useAuthStore.setState({ user: { email: "member@saturn.ai" } });
+  const calls = recordFetch([() => json(403, { detail: { message: "Enter the code we emailed you", second_factor: "email" } })]);
+  await assert.rejects(reauthenticate("correct horse"), (error) => error instanceof ApiError && error.secondFactor === "email");
+  assert.equal(calls[0].body.code, undefined);
+  const sent = recordFetch([() => new Response(null, { status: 204 })]);
+  await reauthenticate("correct horse", undefined, "654321");
+  assert.equal(sent[0].body.code, "654321");
+  assert.equal(sent[0].body.totp_code, undefined);
   assert.match(sent[0].body.password, /^v2\./);
 });
 

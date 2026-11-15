@@ -927,6 +927,7 @@ export const en = {
     reauthTotpBody: "This account uses an authenticator app. Enter its 6-digit code, or a backup code, to continue.",
     reauthTotpCode: "Authenticator or backup code",
     reauthPasskeyBody: "This account confirms with its passkey. Use the passkey to continue.",
+    reauthEmailBody: "This account signs in with an emailed code. Enter your password and the code we emailed you to continue.",
     emailChangeBody: "Enter the code sent to your current email and the code sent to the new address.",
     currentCode: "Code from current email",
     nextCode: "Code from new email",
