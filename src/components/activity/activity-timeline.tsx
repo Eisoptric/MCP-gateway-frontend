@@ -327,16 +327,26 @@ export function chainPreview(
   };
 }
 
+export type OlderActivity = {
+  /** There is an older page to load. */
+  available: boolean;
+  loading: boolean;
+  failed: boolean;
+  load: () => void;
+};
+
 export function AuditLog({
   events,
   urlQuery,
   focusEvent = "",
   detailed = false,
+  older,
 }: {
   events: ActivityEvent[];
   urlQuery: string;
   focusEvent?: string;
   detailed?: boolean;
+  older?: OlderActivity;
 }) {
   const { t, locale } = useI18n();
   const { data } = useConsole();
@@ -598,6 +608,19 @@ export function AuditLog({
           ))}
         </div>
       )}
+      {events.length > 0 && older?.available ? (
+        <div className="mt-4 flex flex-col items-center gap-2">
+          <button
+            type="button"
+            disabled={older.loading}
+            onClick={older.load}
+            className="h-9 rounded-lg border border-border px-4 text-[13px] hover:bg-muted disabled:opacity-60"
+          >
+            {older.loading ? t("activity.loadingOlder") : t("activity.loadOlder")}
+          </button>
+          {older.failed ? <p role="alert" className="text-[13px] text-destructive">{t("activity.loadOlderFailed")}</p> : null}
+        </div>
+      ) : null}
     </div>
   );
 }

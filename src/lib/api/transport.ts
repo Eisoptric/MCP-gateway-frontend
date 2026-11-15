@@ -62,7 +62,7 @@ export async function apiErrorMessage(response: Response): Promise<{ message: st
   return { message: fallback };
 }
 
-export async function request<T>(path: string, init?: RequestInit, auth = true): Promise<T> {
+async function send(path: string, init?: RequestInit, auth = true): Promise<Response> {
   const headers = new Headers(init?.headers);
   if (!headers.has("Content-Type") && init?.body) {
     headers.set("Content-Type", "application/json");
@@ -92,11 +92,21 @@ export async function request<T>(path: string, init?: RequestInit, auth = true):
     throw new ApiError(response.status, parsed.message, parsed.migration);
   }
 
+  return response;
+}
+
+export async function request<T>(path: string, init?: RequestInit, auth = true): Promise<T> {
+  const response = await send(path, init, auth);
   if (response.status === 204) {
     return undefined as T;
   }
-
   return (await response.json()) as T;
+}
+
+/** One page of a list, and the cursor for the page after it (null on the last page). */
+export async function getPage<T>(path: string): Promise<{ items: T[]; next: string | null }> {
+  const response = await send(path);
+  return { items: (await response.json()) as T[], next: response.headers.get("X-Next-Cursor") };
 }
 
 export function get<T>(path: string) {
