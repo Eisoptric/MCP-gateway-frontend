@@ -947,7 +947,7 @@ export const zh: Messages = {
       point2: "MCP Gateway，不限工具集數量",
       point3: "無限審計紀錄",
       point4: "本機憑證代理",
-      point5: "開源，MIT 授權",
+      point5: "開源，Apache 2.0 授權",
       cta: "開始使用",
     },
     pro: {

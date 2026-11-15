@@ -954,7 +954,7 @@ export const en = {
       point2: "MCP gateway with unlimited tool sets",
       point3: "Unlimited audit history",
       point4: "Local credential broker",
-      point5: "Open source, MIT licensed",
+      point5: "Open source, Apache 2.0 licensed",
       cta: "Get started",
     },
     pro: {

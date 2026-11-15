@@ -8,7 +8,7 @@
 
 Connect MCP servers, choose which tools each agent can see, write the policy that decides every call, approve what needs a person, and read the audit record, from one console.
 
-[![License: FSL-1.1-ALv2](https://img.shields.io/badge/license-FSL--1.1--ALv2-blue.svg)](LICENSE.md)
+[![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Check](https://github.com/Saturn-Technology-Project/Saturn-MCP-Frontend/actions/workflows/check.yml/badge.svg)](https://github.com/Saturn-Technology-Project/Saturn-MCP-Frontend/actions/workflows/check.yml)
 ![Next.js](https://img.shields.io/badge/Next.js-16.3-000000.svg?logo=next.js&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-61DAFB.svg?logo=react&logoColor=black)
@@ -213,4 +213,4 @@ Pushing to `main` builds a `linux/amd64` image, pushes it to Artifact Registry a
 
 ## License
 
-[FSL-1.1-ALv2](LICENSE.md). Copyright 2026 Rick Weng. You may read, audit, modify and self-host this code for any purpose except offering a competing commercial service. Two years after each version is released, it also becomes available under the Apache License 2.0.
+[Apache License 2.0](LICENSE) © 2026 Rick Weng. See [`NOTICE`](NOTICE). Versions released before this change were licensed under FSL-1.1-ALv2.

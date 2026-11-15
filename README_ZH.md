@@ -8,7 +8,7 @@
 
 在同一個主控台連接 MCP 伺服器、決定每個 Agent 看得到哪些工具、撰寫決定每一次呼叫的政策、核准需要人工確認的操作，並查閱稽核紀錄。
 
-[![License: FSL-1.1-ALv2](https://img.shields.io/badge/license-FSL--1.1--ALv2-blue.svg)](LICENSE.md)
+[![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Check](https://github.com/Saturn-Technology-Project/Saturn-MCP-Frontend/actions/workflows/check.yml/badge.svg)](https://github.com/Saturn-Technology-Project/Saturn-MCP-Frontend/actions/workflows/check.yml)
 ![Next.js](https://img.shields.io/badge/Next.js-16.3-000000.svg?logo=next.js&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-61DAFB.svg?logo=react&logoColor=black)
@@ -213,4 +213,4 @@ npx tsc --noEmit   # 嚴格型別檢查
 
 ## 授權
 
-[FSL-1.1-ALv2](LICENSE.md)。Copyright 2026 Rick Weng。你可以為任何目的閱讀、稽核、修改並自行架設這份程式碼，但不得用來提供與其競爭的商業服務。每個版本發布滿兩年後，也會以 Apache License 2.0 授權。
+[Apache License 2.0](LICENSE) © 2026 Rick Weng。詳見 [`NOTICE`](NOTICE)。在此之前發布的版本採用 FSL-1.1-ALv2 授權。
