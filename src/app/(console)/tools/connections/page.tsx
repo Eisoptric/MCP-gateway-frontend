@@ -4,13 +4,14 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { MarketIcon } from "@/components/tools/market-icon";
+import { McpSignInStatus } from "@/components/tools/mcp-sign-in-status";
+import { useMcpSignIn } from "@/hooks/use-mcp-sign-in";
 import { QueryGate } from "@/components/layout/query-gate";
 import { Button } from "@/components/ui/button";
 import { StatusLabel } from "@/components/ui/status-dot";
 import { consoleQueryKey, useConsole, useDeleteMcpServer } from "@/hooks/use-console";
 import { canAccess } from "@/lib/access";
 import { connectMcpServer } from "@/lib/api";
-import { authorizeMcp, mcpOauthErrorText } from "@/lib/mcp-authorize";
 import { useAuthStore } from "@/lib/auth";
 import { relativeTime } from "@/lib/format";
 import { useI18n } from "@/lib/i18n";
@@ -156,29 +157,21 @@ export default function ConnectionsPage() {
 
 function ReconnectButton({ server }: { server: McpServer }) {
   const { t } = useI18n();
-  const client = useQueryClient();
-  const [pending, setPending] = useState(false);
+  const signIn = useMcpSignIn();
   const [error, setError] = useState("");
+
+  async function reconnect() {
+    setError("");
+    const message = await signIn.start({ name: server.name, endpoint: server.endpoint });
+    if (message) setError(message);
+  }
 
   return (
     <span className="inline-flex flex-col items-start gap-1" onClick={(event) => event.stopPropagation()}>
-      <Button
-        type="button"
-        size="sm"
-        disabled={pending || !server.endpoint}
-        onClick={() => {
-          setError("");
-          setPending(true);
-          void authorizeMcp({ name: server.name, endpoint: server.endpoint })
-            .then(() => client.invalidateQueries({ queryKey: consoleQueryKey }))
-            .catch((caught: unknown) => {
-              setError(mcpOauthErrorText(caught, { popup: t("marketplace.popupBlocked"), signInUnavailable: t("marketplace.signInUnavailable"), incomplete: t("marketplace.signInIncomplete") }));
-            })
-            .finally(() => setPending(false));
-        }}
-      >
-        {pending ? t("marketplace.authorizing") : t("tools.reconnect")}
+      <Button type="button" size="sm" disabled={signIn.pending || !server.endpoint} onClick={() => void reconnect()}>
+        {signIn.pending ? t("marketplace.authorizing") : t("tools.reconnect")}
       </Button>
+      <McpSignInStatus phase={signIn.phase} onCancel={signIn.cancel} onRetry={() => void reconnect()} />
       {error ? <span className="text-[12px] text-destructive">{error}</span> : null}
     </span>
   );
@@ -320,7 +313,7 @@ function OauthForm({ server, canAdmin }: { server: McpServer; canAdmin: boolean 
   const client = useQueryClient();
   const [token, setToken] = useState("");
   const [oauthError, setOauthError] = useState("");
-  const [authorizing, setAuthorizing] = useState(false);
+  const signIn = useMcpSignIn();
   const save = useMutation({
     mutationFn: () =>
       connectMcpServer({
@@ -333,6 +326,12 @@ function OauthForm({ server, canAdmin }: { server: McpServer; canAdmin: boolean 
       await client.invalidateQueries({ queryKey: consoleQueryKey });
     },
   });
+
+  async function authorize() {
+    setOauthError("");
+    const message = await signIn.start({ name: server.name, endpoint: server.endpoint });
+    if (message) setOauthError(message);
+  }
 
   return (
     <form
@@ -350,20 +349,12 @@ function OauthForm({ server, canAdmin }: { server: McpServer; canAdmin: boolean 
           <Button
             type="button"
             size="sm"
-            disabled={authorizing || !server.endpoint}
-            onClick={() => {
-              setOauthError("");
-              setAuthorizing(true);
-              void authorizeMcp({ name: server.name, endpoint: server.endpoint })
-                .then(() => client.invalidateQueries({ queryKey: consoleQueryKey }))
-                .catch((error: unknown) => {
-                  setOauthError(mcpOauthErrorText(error, { popup: t("marketplace.popupBlocked"), signInUnavailable: t("marketplace.signInUnavailable"), incomplete: t("marketplace.signInIncomplete") }));
-                })
-                .finally(() => setAuthorizing(false));
-            }}
+            disabled={signIn.pending || !server.endpoint}
+            onClick={() => void authorize()}
           >
-            {authorizing ? t("marketplace.authorizing") : t("marketplace.useProvider")}
+            {signIn.pending ? t("marketplace.authorizing") : t("marketplace.useProvider")}
           </Button>
+          <McpSignInStatus phase={signIn.phase} onCancel={signIn.cancel} onRetry={() => void authorize()} />
           <input aria-label={t("tools.token")}
             type="password"
             value={token}

@@ -47,6 +47,18 @@ export function startMcpOauth(body: { name: string; endpoint: string; nonce: str
   return post<{ authorization_url?: string | null; server?: ApiMcpServer | null }>("/mcp-servers/oauth/start", body);
 }
 
+export interface ApiMcpOauthAttempt {
+  status: "pending" | "connected" | "failed" | "expired";
+  reason?: string | null;
+  message?: string | null;
+  expires_at: string;
+}
+
+/** How the sign-in this member started with `nonce` stands. 404 for anyone else's. */
+export function fetchMcpOauthAttempt(nonce: string) {
+  return get<ApiMcpOauthAttempt>(`/mcp-servers/oauth/attempts/${encodeURIComponent(nonce)}`);
+}
+
 export function refreshMcpServer(id: string) {
   return post<ApiMcpServer>(`/mcp-servers/${id}/refresh`);
 }
