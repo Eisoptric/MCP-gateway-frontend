@@ -4,6 +4,7 @@ import { FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   ApiError,
+  type SecondFactor,
   reauthenticate,
   reauthenticateWithCode,
   reauthenticateWithPasskey,
@@ -18,6 +19,9 @@ export function ReauthForm({ onReady, busy }: { onReady: () => void; busy?: bool
   const { t } = useI18n();
   const [password, setPassword] = useState("");
   const [code, setCode] = useState("");
+  const [totpCode, setTotpCode] = useState("");
+  // Set once the API says this account's step-up needs more than the password or emailed code.
+  const [secondFactor, setSecondFactor] = useState<SecondFactor | null>(null);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
@@ -26,12 +30,18 @@ export function ReauthForm({ onReady, busy }: { onReady: () => void; busy?: bool
     event.preventDefault();
     setError("");
     setPending(true);
+    const second = secondFactor === "totp" ? totpCode.trim() : undefined;
     try {
-      if (code.length === 6) await reauthenticateWithCode(code);
-      else await reauthenticate(password);
+      if (code.length === 6) await reauthenticateWithCode(code, second);
+      else await reauthenticate(password, second);
       onReady();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : t("common.apiError"));
+      if (err instanceof ApiError && err.secondFactor) {
+        setSecondFactor(err.secondFactor);
+        setError("");
+      } else {
+        setError(err instanceof ApiError ? err.message : t("common.apiError"));
+      }
     } finally {
       setPending(false);
     }
@@ -90,8 +100,35 @@ export function ReauthForm({ onReady, busy }: { onReady: () => void; busy?: bool
           />
         </label>
       ) : null}
+      {secondFactor === "totp" ? (
+        <>
+          <p className="mt-3 text-[13px] text-muted-foreground">{t("profile.reauthTotpBody")}</p>
+          <label className="mt-3 block text-[12px] text-muted-foreground">
+            {t("profile.reauthTotpCode")}
+            <input
+              autoComplete="one-time-code"
+              value={totpCode}
+              maxLength={64}
+              onChange={(event) => setTotpCode(event.target.value)}
+              className={fieldClass}
+            />
+          </label>
+        </>
+      ) : null}
+      {secondFactor === "passkey" ? (
+        <p role="status" className="mt-3 text-[13px] text-muted-foreground">{t("profile.reauthPasskeyBody")}</p>
+      ) : null}
       <div className="mt-3 flex flex-wrap gap-2">
-        <Button type="submit" disabled={pending || busy || (!password && code.length !== 6)}>
+        <Button
+          type="submit"
+          disabled={
+            pending ||
+            busy ||
+            (!password && code.length !== 6) ||
+            secondFactor === "passkey" ||
+            (secondFactor === "totp" && !totpCode.trim())
+          }
+        >
           {t("login.confirmTitle")}
         </Button>
         <Button type="button" variant="outline" disabled={pending || busy} onClick={() => void sendCode()}>

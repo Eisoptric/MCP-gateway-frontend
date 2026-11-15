@@ -69,16 +69,11 @@ export async function login(email: string, password: string): Promise<LoginRespo
   try {
     return await submit();
   } catch (error) {
-    if (!(error instanceof ApiError) || error.migration !== "v1") {
-      if (error instanceof ApiError && error.migration === "password") return submit({ legacy_password: password });
-      throw error;
-    }
-    try {
-      return await submit({ legacy_v1: await legacyLoginVerifier(password) });
-    } catch (next) {
-      if (!(next instanceof ApiError) || next.migration !== "password") throw next;
-      return submit({ legacy_password: password });
-    }
+    // Until the legacy deadline every failed sign-in carries this hint, whatever the address, so
+    // it says nothing about the account. Both older proofs go in one retry; the server tells a
+    // legacy account apart only once one of them matches.
+    if (!(error instanceof ApiError) || !error.migration) throw error;
+    return submit({ legacy_v1: await legacyLoginVerifier(password), legacy_password: password });
   }
 }
 
@@ -261,16 +256,20 @@ export function disableEmailMfa() {
   return del("/auth/mfa/email");
 }
 
-export async function reauthenticate(password: string) {
-  return post<void>("/auth/reauth", { password: await loginVerifier(password, signedInEmail()) });
+/** With an authenticator app on the account, step-up also needs its code (ApiError.secondFactor says so). */
+export async function reauthenticate(password: string, totpCode?: string) {
+  return post<void>("/auth/reauth", {
+    password: await loginVerifier(password, signedInEmail()),
+    ...(totpCode ? { totp_code: totpCode } : {}),
+  });
 }
 
 export function requestReauthCode() {
   return post<void>("/auth/reauth/email/code", { locale: useLocaleStore.getState().locale });
 }
 
-export function reauthenticateWithCode(code: string) {
-  return post<void>("/auth/reauth", { code });
+export function reauthenticateWithCode(code: string, totpCode?: string) {
+  return post<void>("/auth/reauth", { code, ...(totpCode ? { totp_code: totpCode } : {}) });
 }
 
 export async function reauthenticateWithPasskey() {
