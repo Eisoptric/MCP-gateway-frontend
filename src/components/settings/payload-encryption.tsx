@@ -177,7 +177,7 @@ export function PayloadEncryption() {
       ) : null}
       {error ? <p role="alert" className="mt-2 text-[13px] text-destructive">{error}</p> : null}
       {status.data?.historical_note ? (
-        <p className="mt-3 max-w-xl text-[12px] text-muted-foreground">{status.data.historical_note}</p>
+        <p className="mt-3 max-w-xl text-[12px] text-muted-foreground">{t("settings.payloadHistoricalNote")}</p>
       ) : null}
     </div>
   );

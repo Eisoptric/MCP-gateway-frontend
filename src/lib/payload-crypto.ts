@@ -509,6 +509,9 @@ export async function confirmEmailChangeKeepingKey(currentCode: string, nextCode
   if (!password) return confirmEmailChange(currentCode, nextCode);
   const email = useAuthStore.getState().user?.email ?? "";
   const target = nextEmail.trim().toLowerCase();
+  // The new stored value is derived from the new address. Deriving it from the current one would
+  // store a value the new address can never reproduce, and the person could not sign in.
+  if (!target || target === email.trim().toLowerCase()) throw new Error("The new email address is missing.");
   const carried = email ? await rewrapMemberKey(password, email, password, target) : null;
   const user = await confirmEmailChange(currentCode, nextCode, { password, nextEmail: target, memberBackup: carried?.backup });
   if (carried) holdMemberKey(carried.privateKey, carried.publicKey, carried.memberKeyId);
