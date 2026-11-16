@@ -14,7 +14,7 @@
 ![React](https://img.shields.io/badge/React-19-61DAFB.svg?logo=react&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6.svg?logo=typescript&logoColor=white)
 
-[功能](#功能) · [快速開始](#快速開始) · [設定](#設定) · [架構](#架構) · [安全](#安全) · [開發](#開發) · [English](README.md)
+[功能](#功能) · [快速開始](#快速開始) · [設定](#設定) · [架構](#架構) · [安全](#安全) · [開發](#開發) · [已知限制](#已知限制) · [更新紀錄](CHANGELOG.md) · [English](README.md)
 
 </div>
 
@@ -210,6 +210,17 @@ npx tsc --noEmit   # 嚴格型別檢查
 ## 部署
 
 推送到 `main` 時會建置 `linux/amd64` 映像檔、推送到 Artifact Registry，並以 Workload Identity Federation 驗證，把該映像檔摘要部署到 Cloud Run 的 `3000` 埠（[workflow](.github/workflows/deploy-cloud-run.yml)）。Repository 的 secrets 與變數，以及部署順序（先部署 API），見 [`DEPLOY.md`](DEPLOY.md)。
+
+## 已知限制
+
+以下是 [0.1.0](CHANGELOG.md) 時已知、尚未修正的問題。API 本身的清單在 [backend README](https://github.com/Saturn-Technology-Project/Saturn-MCP-Backend/blob/main/README_ZH.md#已知限制)。
+
+- 重新驗證時密碼打錯，API 會回 `401`，主控台會因此登出。
+- MCP 登入進行中，離開頁面或在自訂表單切換分頁，主控台就會停止輪詢。API 端仍會完成登入，重新整理就看得到結果。
+- 如果提供方回呼帶的 state API 認不出來，主控台就無法對應到這次登入，會一直等到 15 分鐘逾時。
+- 已經匯出組織私鑰的成員，在權限被撤銷之後仍保有那份副本。
+- 沒有瀏覽器測試。passkey 登入與重新驗證、提供方的登入視窗，以及用真實 MCP 提供方登入，都沒有在瀏覽器裡完整跑過。
+- [Uptime workflow](.github/workflows/uptime.yml) 從 GitHub 提供的 runner 請求 `/health`。如果 Cloudflare 擋下或挑戰這些位址，即使主控台正常，每次都會因 403 失敗。
 
 ## 授權
 

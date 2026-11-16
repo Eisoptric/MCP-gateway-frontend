@@ -14,7 +14,7 @@ Connect MCP servers, choose which tools each agent can see, write the policy tha
 ![React](https://img.shields.io/badge/React-19-61DAFB.svg?logo=react&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6.svg?logo=typescript&logoColor=white)
 
-[Features](#features) · [Quick start](#quick-start) · [Configuration](#configuration) · [Architecture](#architecture) · [Security](#security) · [Development](#development) · [中文](README_ZH.md)
+[Features](#features) · [Quick start](#quick-start) · [Configuration](#configuration) · [Architecture](#architecture) · [Security](#security) · [Development](#development) · [Known limitations](#known-limitations) · [Changelog](CHANGELOG.md) · [中文](README_ZH.md)
 
 </div>
 
@@ -210,6 +210,17 @@ Every user-visible string goes into both `en` and `zh` in `messages.ts`; give ev
 ## Deploy
 
 Pushing to `main` builds a `linux/amd64` image, pushes it to Artifact Registry and deploys that digest to Cloud Run on port `3000`, authenticating with Workload Identity Federation ([workflow](.github/workflows/deploy-cloud-run.yml)). The repository secrets and variables, and the order to deploy in (API first), are in [`DEPLOY.md`](DEPLOY.md).
+
+## Known limitations
+
+These are known as of [0.1.0](CHANGELOG.md) and not yet fixed. The API's own list is in the [backend README](https://github.com/Saturn-Technology-Project/Saturn-MCP-Backend#known-limitations).
+
+- A wrong password at a step-up prompt gets a `401` from the API, and the console signs out.
+- While an MCP sign-in is in progress, leaving the page or switching tabs in the custom form stops the console from polling. The API still completes the sign-in, and a reload shows the result.
+- If the provider's callback carries a state the API does not recognize, the console cannot match it to the sign-in and waits until the 15-minute timeout.
+- A member who exported the organization private key keeps that copy after their access is revoked.
+- There are no browser tests. Passkey sign-in and step-up, the provider's sign-in window, and a sign-in with a real MCP provider have not been run end to end in a browser.
+- The [Uptime workflow](.github/workflows/uptime.yml) requests `/health` from GitHub-hosted runners. If Cloudflare blocks or challenges those addresses, every run fails with 403 even while the console is up.
 
 ## License
 
