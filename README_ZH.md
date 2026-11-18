@@ -220,7 +220,7 @@ npx tsc --noEmit   # 嚴格型別檢查
 - 如果提供方回呼帶的 state API 認不出來，主控台就無法對應到這次登入，會一直等到 15 分鐘逾時。
 - 已經匯出組織私鑰的成員，在權限被撤銷之後仍保有那份副本。
 - 沒有瀏覽器測試。passkey 登入與重新驗證、提供方的登入視窗，以及用真實 MCP 提供方登入，都沒有在瀏覽器裡完整跑過。
-- [Uptime workflow](.github/workflows/uptime.yml) 從 GitHub 提供的 runner 請求 `/health`。如果 Cloudflare 擋下或挑戰這些位址，即使主控台正常，每次都會因 403 失敗。
+- 主控台的可用性由 Cloud Monitoring 直接檢查 `*.run.app` 位址，不經過 Cloudflare（見 Backend repo 的 `infra/gcp/README.md`，"Uptime checks"）。Cloudflare 或 DNS 出問题時察覺不到；主控台的 ingress 改成 `internal-and-cloud-load-balancing` 之後也會失效。
 
 ## 授權
 

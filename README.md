@@ -220,7 +220,7 @@ These are known as of [0.1.0](CHANGELOG.md) and not yet fixed. The API's own lis
 - If the provider's callback carries a state the API does not recognize, the console cannot match it to the sign-in and waits until the 15-minute timeout.
 - A member who exported the organization private key keeps that copy after their access is revoked.
 - There are no browser tests. Passkey sign-in and step-up, the provider's sign-in window, and a sign-in with a real MCP provider have not been run end to end in a browser.
-- The [Uptime workflow](.github/workflows/uptime.yml) requests `/health` from GitHub-hosted runners. If Cloudflare blocks or challenges those addresses, every run fails with 403 even while the console is up.
+- Uptime is checked by Cloud Monitoring on the console's `*.run.app` URL, not through Cloudflare (Backend repository, `infra/gcp/README.md`, "Uptime checks"). It does not notice a Cloudflare or DNS outage, and it stops working once the console's ingress is `internal-and-cloud-load-balancing`.
 
 ## License
 

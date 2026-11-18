@@ -2,6 +2,12 @@
 
 Notable changes to Saturn MCP Console. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Changed
+
+- Uptime is checked by Cloud Monitoring on the console's Cloud Run URL, set up from the Backend repository (`infra/gcp/uptime-checks.sh`). The scheduled GitHub Actions check is removed: Cloudflare challenged GitHub-hosted runners, so every run failed with 403 while the console was up.
+
 ## [0.1.0] - 2026-11-16
 
 This is the first tagged release, and it ends the first phase of development. The gaps that are known and not yet fixed are listed under [Known limitations](README.md#known-limitations) in the README.
@@ -52,4 +58,5 @@ This is the first tagged release, and it ends the first phase of development. Th
 - [#2](https://github.com/Saturn-Technology-Project/Saturn-MCP-Frontend/pull/2) Block deploy until the typecheck passes
 - [#1](https://github.com/Saturn-Technology-Project/Saturn-MCP-Frontend/pull/1) Split sign-in into a verifier and a member wrap key
 
+[Unreleased]: https://github.com/Saturn-Technology-Project/Saturn-MCP-Frontend/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/Saturn-Technology-Project/Saturn-MCP-Frontend/releases/tag/v0.1.0
