@@ -220,7 +220,7 @@ npx tsc --noEmit   # 嚴格型別檢查
 - 如果提供方回呼帶的 state API 認不出來，主控台就無法對應到這次登入，會一直等到 15 分鐘逾時。
 - 已經匯出組織私鑰的成員，在權限被撤銷之後仍保有那份副本。
 - 沒有瀏覽器測試。passkey 登入與重新驗證、提供方的登入視窗，以及用真實 MCP 提供方登入，都沒有在瀏覽器裡完整跑過。
-- 主控台的可用性由 Cloud Monitoring 直接檢查 `*.run.app` 位址，不經過 Cloudflare（見 Backend repo 的 `infra/gcp/README.md`，"Uptime checks"）。Cloudflare 或 DNS 出問题時察覺不到；主控台的 ingress 改成 `internal-and-cloud-load-balancing` 之後也會失效。
+- 主控台對外的 uptime 檢查改由後端 repository 建立的 Cloud Monitoring 檢查負責（[Uptime checks from Cloud Monitoring](https://github.com/Saturn-Technology-Project/Saturn-MCP-Backend/blob/main/infra/gcp/README.md#uptime-checks-from-cloud-monitoring)）。Cloudflare 的 Bot Fight Mode 會放行 Google 的探測，目前是推論，尚未實際看到。
 
 ## 授權
 
