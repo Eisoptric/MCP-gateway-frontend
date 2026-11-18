@@ -220,7 +220,7 @@ These are known as of [0.1.0](CHANGELOG.md) and not yet fixed. The API's own lis
 - If the provider's callback carries a state the API does not recognize, the console cannot match it to the sign-in and waits until the 15-minute timeout.
 - A member who exported the organization private key keeps that copy after their access is revoked.
 - There are no browser tests. Passkey sign-in and step-up, the provider's sign-in window, and a sign-in with a real MCP provider have not been run end to end in a browser.
-- The [Uptime workflow](.github/workflows/uptime.yml) requests `/health` from GitHub-hosted runners. If Cloudflare blocks or challenges those addresses, every run fails with 403 even while the console is up.
+- The console's outside uptime check is a Cloud Monitoring check created from the backend repository ([Uptime checks from Cloud Monitoring](https://github.com/Saturn-Technology-Project/Saturn-MCP-Backend/blob/main/infra/gcp/README.md#uptime-checks-from-cloud-monitoring)). That Cloudflare's Bot Fight Mode lets Google's probes through is inferred, not yet seen.
 
 ## License
 
