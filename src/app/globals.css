@@ -140,19 +140,6 @@
     font-feature-settings: "ss01" on, "cv11" on;
   }
 
-  @media (max-width: 767px) {
-    input:not([type="checkbox"]):not([type="radio"]),
-    select,
-    textarea {
-      font-size: 16px;
-    }
-
-    input:not([type="checkbox"]):not([type="radio"]),
-    select {
-      min-height: 2.75rem;
-    }
-  }
-
   ::selection {
     background: #171716;
     color: #f7f7f5;
@@ -161,6 +148,23 @@
   .dark ::selection {
     background: #f2f2f0;
     color: #0a0a0a;
+  }
+}
+
+/* On a phone, iOS Safari zooms the page into any field whose text is smaller than 16px, and
+   stays zoomed after the keyboard closes. Fields across the console set text-[13px], so this
+   sits outside every layer on purpose: in the base layer the utilities layer won over it. */
+@media (max-width: 767px) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea,
+  [contenteditable="true"] {
+    font-size: 16px;
+  }
+
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select {
+    min-height: 2.75rem;
   }
 }
 

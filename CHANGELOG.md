@@ -10,6 +10,10 @@ Notable changes to Saturn MCP Console. The format follows [Keep a Changelog](htt
 
 - Cloudflare (`mcp.cloudflare.com`), Cloud Run (`run.googleapis.com`), Memorystore for Redis (`redis.googleapis.com`), Cloud SQL for PostgreSQL (`sqladmin.googleapis.com`), alphaXiv for arXiv papers (`api.alphaxiv.org`) and Weights & Biases (`mcp.withwandb.com`) in the marketplace. They need the backend change that approves these hosts.
 
+### Fixed
+
+- Typing in a field on a phone no longer zooms the page. iOS Safari zooms into any field with text under 16px; the rule that set 16px on phones was in the base layer, where the `text-[13px]` on each field overrode it.
+
 ### Changed
 
 - The console's outside uptime check moved from a scheduled GitHub workflow to a Cloud Monitoring check set up from the backend repository. On the Cloudflare free plan, Bot Fight Mode answered every run from GitHub with a 403 while the console was up.
