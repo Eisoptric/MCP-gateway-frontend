@@ -92,10 +92,12 @@ export function McpConnectForm() {
 const fieldClass =
   "h-9 w-full rounded-lg border border-border bg-background px-3 text-[13px] text-foreground outline-none placeholder:text-muted-foreground focus:border-ring";
 
+// A tool added to a set starts at "Require approval": with no policy rule for it, that setting
+// decides the call. Admins switch it to Allow on purpose.
 function togglePicked(current: Record<string, boolean>, id: string) {
   const next = { ...current };
   if (id in next) delete next[id];
-  else next[id] = false;
+  else next[id] = true;
   return next;
 }
 
@@ -193,7 +195,7 @@ export function ToolSetEditor({
       const next = { ...current };
       for (const tool of tools) {
           if (selected) {
-          if (!(tool.id in next)) next[tool.id] = false;
+          if (!(tool.id in next)) next[tool.id] = true;
         } else if (tool.id in next) {
           delete next[tool.id];
         }
