@@ -329,6 +329,38 @@ export const marketCatalog: MarketEntry[] = [
     },
   },
   {
+    id: "alphaxiv",
+    category: "data",
+    endpoint: "https://api.alphaxiv.org/mcp/v1",
+    publisher: "alphaXiv",
+    docs: "https://alphaxiv.org/docs/mcp",
+    auth: "token",
+    blurb: {
+      en: "Search arXiv papers and read them through alphaXiv.",
+      zh: "透過 alphaXiv 搜尋並閱讀 arXiv 論文。",
+    },
+    points: {
+      en: ["Find papers by keyword and semantic search", "Read a paper's full text or ask about its PDF", "Library and follow tools write to your alphaXiv account"],
+      zh: ["用關鍵字與語意搜尋找論文", "讀取論文全文，或針對 PDF 提問", "書庫與追蹤工具會寫入你的 alphaXiv 帳戶"],
+    },
+  },
+  {
+    id: "wandb",
+    category: "development",
+    endpoint: "https://mcp.withwandb.com/mcp",
+    publisher: "Weights & Biases",
+    docs: "https://docs.wandb.ai/platform/mcp-server",
+    auth: "token",
+    blurb: {
+      en: "Runs, Weave traces, artifacts, and reports in W&B. Paste a W&B API key.",
+      zh: "W&B 的 runs、Weave traces、artifacts 與報告。貼上 W&B API 金鑰。",
+    },
+    points: {
+      en: ["Query and compare runs and their history", "Inspect Weave traces and evaluations", "Only report and analysis-run tools write"],
+      zh: ["查詢並比較 runs 與它們的歷史紀錄", "查看 Weave traces 與評估結果", "只有建立報告與分析 run 的工具會寫入"],
+    },
+  },
+  {
     id: "indeed",
     category: "productivity",
     endpoint: "https://mcp.indeed.com/claude/mcp",
@@ -849,6 +881,8 @@ export function marketName(id: string) {
     "cloud-run": "Cloud Run",
     "memorystore-redis": "Memorystore for Redis",
     "cloud-sql-postgres": "Cloud SQL for PostgreSQL",
+    alphaxiv: "alphaXiv",
+    wandb: "Weights & Biases",
     indeed: "Indeed",
     spotify: "Spotify",
     booking: "Booking.com",

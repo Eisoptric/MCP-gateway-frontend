@@ -6,7 +6,7 @@ Notable changes to Saturn MCP Console. The format follows [Keep a Changelog](htt
 
 ### Added
 
-- Cloudflare (`mcp.cloudflare.com`), Cloud Run (`run.googleapis.com`), Memorystore for Redis (`redis.googleapis.com`) and Cloud SQL for PostgreSQL (`sqladmin.googleapis.com`) in the marketplace. They need the backend change that approves these hosts.
+- Cloudflare (`mcp.cloudflare.com`), Cloud Run (`run.googleapis.com`), Memorystore for Redis (`redis.googleapis.com`), Cloud SQL for PostgreSQL (`sqladmin.googleapis.com`), alphaXiv for arXiv papers (`api.alphaxiv.org`) and Weights & Biases (`mcp.withwandb.com`) in the marketplace. They need the backend change that approves these hosts.
 
 ### Changed
 
