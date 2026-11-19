@@ -296,7 +296,7 @@ export const en = {
     connectAction: "Connect",
     refresh: "Refresh tools",
     sets: "Tool sets",
-    setsNote: "A set is which tools an agent can use, and the default for each one. Policy decides the call.",
+    setsNote: "A set is which tools an agent can use, and the default for each one. A policy rule for the tool decides first; with none, the tool runs, or waits for approval if it is set to require it.",
     setBoundary: "Checked tools are discoverable to agents on this set. Unchecked tools are not.",
     setName: "Set name",
     newSet: "New tool set",
