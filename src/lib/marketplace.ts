@@ -297,6 +297,22 @@ export const marketCatalog: MarketEntry[] = [
     },
   },
   {
+    id: "cloud-sql-postgres",
+    category: "data",
+    endpoint: "https://sqladmin.googleapis.com/mcp",
+    publisher: "Google Cloud",
+    docs: "https://docs.cloud.google.com/sql/docs/postgres/use-cloudsql-mcp",
+    auth: "token",
+    blurb: {
+      en: "PostgreSQL on Cloud SQL: instances, users, backups, and SQL.",
+      zh: "Cloud SQL 上的 PostgreSQL：執行個體、使用者、備份與 SQL。",
+    },
+    points: {
+      en: ["List and inspect instances and users", "Run SQL, with a separate read-only tool", "execute_sql can write, so add a policy or approval for it"],
+      zh: ["列出並查看執行個體與使用者", "執行 SQL，另有唯讀的查詢工具", "execute_sql 可以寫入，請為它設定政策或審批"],
+    },
+  },
+  {
     id: "memorystore-redis",
     category: "data",
     endpoint: "https://redis.googleapis.com/mcp",
@@ -832,6 +848,7 @@ export function marketName(id: string) {
     cloudflare: "Cloudflare",
     "cloud-run": "Cloud Run",
     "memorystore-redis": "Memorystore for Redis",
+    "cloud-sql-postgres": "Cloud SQL for PostgreSQL",
     indeed: "Indeed",
     spotify: "Spotify",
     booking: "Booking.com",
