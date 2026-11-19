@@ -5,7 +5,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { consoleQueryKey } from "@/hooks/use-console";
 import { connectMcpServer } from "@/lib/api";
+import Link from "next/link";
 import { useMcpSignIn } from "@/hooks/use-mcp-sign-in";
+import { isHostNotApproved } from "@/lib/mcp-authorize";
 import { useI18n } from "@/lib/i18n";
 import { MarketIcon } from "@/components/tools/market-icon";
 import { McpSignInStatus } from "@/components/tools/mcp-sign-in-status";
@@ -519,7 +521,16 @@ function ConnectForm({
         {paste ? t("marketplace.useProvider") : t("marketplace.pasteInstead")}
       </button>
       {shownError ? <p role="alert" className="text-[13px] text-destructive">{shownError}</p> : null}
-      {connect.isError ? <p role="alert" className="text-[13px] text-destructive">{connect.error.message}</p> : null}
+      {connect.isError ? (
+        <p role="alert" className="text-[13px] text-destructive">
+          {isHostNotApproved(connect.error) ? t("marketplace.hostNotApproved") : connect.error.message}
+        </p>
+      ) : null}
+      {shownError === t("marketplace.hostNotApproved") || isHostNotApproved(connect.error) ? (
+        <Link href="/settings#mcp-hosts" className="block text-[13px] underline">
+          {t("marketplace.hostNotApprovedLink")}
+        </Link>
+      ) : null}
     </form>
   );
 }

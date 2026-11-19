@@ -29,6 +29,11 @@ export const MCP_SIGN_IN_REASONS = [
 type Translate = (path: string, vars?: Record<string, string | number>) => string;
 
 /** The console text for a failed sign-in. Empty when the user cancelled it. */
+/** The API refuses an endpoint whose host is on neither Saturn's list nor the organization's. */
+export function isHostNotApproved(error: unknown): boolean {
+  return error instanceof Error && error.message === "MCP endpoint host is not approved";
+}
+
 export function mcpOauthErrorText(error: unknown, t: Translate): string {
   if (error instanceof McpAuthorizeError) {
     if (error.code === "cancelled") return "";
@@ -40,6 +45,7 @@ export function mcpOauthErrorText(error: unknown, t: Translate): string {
     return t("marketplace.signInFailed.generic");
   }
   if (error instanceof Error && error.message.includes("does not let Saturn start sign-in")) return t("marketplace.signInUnavailable");
+  if (isHostNotApproved(error)) return t("marketplace.hostNotApproved");
   return error instanceof Error ? error.message : t("marketplace.popupBlocked");
 }
 

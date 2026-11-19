@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Avatar, PhotoField } from "@/components/account/photo-field";
 import { QueryGate } from "@/components/layout/query-gate";
+import { McpAllowedHosts } from "@/components/settings/mcp-allowed-hosts";
 import { PayloadEncryption } from "@/components/settings/payload-encryption";
 import { orgQueryKey, useOrg, useOrgMembers } from "@/hooks/use-team";
 import { canAccess } from "@/lib/access";
@@ -44,6 +45,7 @@ export default function SettingsPage() {
           <h1 className="truncate text-[26px] font-semibold tracking-tight">{name}</h1>
         </div>
         <PayloadEncryption />
+        {canAccess(sessionUser?.permissions, "team", "read") ? <McpAllowedHosts canEdit={canEditPhoto} /> : null}
 
         <div className="mt-8 border-t border-border">
           <SettingRow label={t("settings.logo")} hint={t("settings.logoHint")}>
