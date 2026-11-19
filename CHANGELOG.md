@@ -17,6 +17,7 @@ Notable changes to Saturn MCP Console. The format follows [Keep a Changelog](htt
 
 ### Changed
 
+- The tool sets note says what the backend now does: a policy rule for the tool decides first, and with none, the tool runs or waits for approval as set in the tool set.
 - The console's outside uptime check moved from a scheduled GitHub workflow to a Cloud Monitoring check set up from the backend repository. On the Cloudflare free plan, Bot Fight Mode answered every run from GitHub with a 403 while the console was up.
 
 ## [0.1.0] - 2026-11-16
