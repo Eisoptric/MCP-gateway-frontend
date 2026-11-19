@@ -31,12 +31,12 @@ export const marketCatalog: MarketEntry[] = [
     docs: "https://developers.google.com/workspace/guides/configure-mcp-servers",
     auth: "token",
     blurb: {
-      en: "Search, read, and draft mail in Gmail.",
-      zh: "搜尋、讀取並撰寫 Gmail。",
+      en: "Search, read, draft, and organize mail in Gmail.",
+      zh: "搜尋、讀取、撰寫並整理 Gmail。",
     },
     points: {
-      en: ["Search and read messages", "Draft and compose mail", "Uses the Gmail access you approve"],
-      zh: ["搜尋並讀取郵件", "撰寫草稿與新郵件", "使用你核准的 Gmail 權限"],
+      en: ["Search and read messages, and write drafts", "Label, trash, and mark spam to organize mail", "Cannot delete mail permanently; trashed mail can be restored"],
+      zh: ["搜尋、讀取郵件並撰寫草稿", "加標籤、丟到垃圾桶、標記垃圾郵件來整理信件", "無法永久刪除郵件；丟到垃圾桶的郵件可以復原"],
     },
   },
   {
