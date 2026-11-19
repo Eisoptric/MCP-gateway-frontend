@@ -48,12 +48,12 @@ export const marketCatalog: MarketEntry[] = [
     docs: "https://developers.google.com/workspace/calendar/api/guides/configure-mcp-server",
     auth: "token",
     blurb: {
-      en: "Events and availability in Google Calendar.",
-      zh: "Google Calendar 的行程與空檔。",
+      en: "Read, schedule, and update events in Google Calendar.",
+      zh: "讀取、安排並更新 Google Calendar 的行程。",
     },
     points: {
-      en: ["Look up calendars and events", "Check free and busy time", "Read events you can access"],
-      zh: ["查看日曆與行程", "查詢有空與忙碌時段", "讀取你有權限的行程"],
+      en: ["Look up calendars, events, and free time", "Create, update, and delete events", "Accept or decline invitations"],
+      zh: ["查看日曆、行程與空檔", "建立、更新與刪除行程", "接受或拒絕邀請"],
     },
   },
   {
