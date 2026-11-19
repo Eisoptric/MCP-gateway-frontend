@@ -12,6 +12,7 @@ Notable changes to Saturn MCP Console. The format follows [Keep a Changelog](htt
 
 ### Fixed
 
+- The Slack card now uses Slack's fixed endpoint, `https://mcp.slack.com/mcp`, and says to paste a token from an internal Slack app, since Slack does not let other apps sign in. The Shopify card says to approve the store's domain in Settings first.
 - Typing in a field on a phone no longer zooms the page. iOS Safari zooms into any field with text under 16px; the rule that set 16px on phones was in the base layer, where the `text-[13px]` on each field overrode it.
 
 ### Changed

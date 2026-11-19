@@ -196,8 +196,8 @@ export const marketCatalog: MarketEntry[] = [
       zh: "商店的購物車與政策。貼上 https://{shop}.myshopify.com/api/mcp。",
     },
     points: {
-      en: ["Read the cart and shop policies", "The URL is the store domain plus /api/mcp", "Storefront calls do not need a token"],
-      zh: ["讀取購物車與商店政策", "網址是商店網域加上 /api/mcp", "店面呼叫不需要權杖"],
+      en: ["Read the cart and shop policies", "Approve the store’s domain under Settings, then paste its /api/mcp URL", "Storefront calls do not need a token"],
+      zh: ["讀取購物車與商店政策", "先在設定裡核准商店網域，再貼上它的 /api/mcp 網址", "店面呼叫不需要權杖"],
     },
   },
   {
@@ -765,17 +765,17 @@ export const marketCatalog: MarketEntry[] = [
   {
     id: "slack",
     category: "communication",
-    endpoint: "",
+    endpoint: "https://mcp.slack.com/mcp",
     publisher: "Slack",
     docs: "https://docs.slack.dev/ai/slack-mcp-server/",
     auth: "token",
     blurb: {
-      en: "Slack’s remote MCP. Paste the URL Slack gives you.",
-      zh: "Slack 的遠端 MCP。貼上 Slack 提供的網址。",
+      en: "Slack’s remote MCP. Paste a user token from your workspace’s internal Slack app.",
+      zh: "Slack 的遠端 MCP。貼上工作區內部 Slack App 的使用者權杖。",
     },
     points: {
-      en: ["Read channels you can access", "Search messages", "The URL comes from Slack after you authorize"],
-      zh: ["讀取你有權限的頻道", "搜尋訊息", "授權後向 Slack 取得網址"],
+      en: ["Read channels you can access", "Search messages", "Slack only lets its listed or internal apps sign in, so paste a token"],
+      zh: ["讀取你有權限的頻道", "搜尋訊息", "Slack 只允許上架或內部 App 登入，所以請貼上權杖"],
     },
   },
   {
