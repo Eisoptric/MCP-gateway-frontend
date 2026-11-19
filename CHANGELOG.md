@@ -4,6 +4,10 @@ Notable changes to Saturn MCP Console. The format follows [Keep a Changelog](htt
 
 ## [Unreleased]
 
+### Added
+
+- Cloudflare (`mcp.cloudflare.com`), Cloud Run (`run.googleapis.com`) and Memorystore for Redis (`redis.googleapis.com`) in the marketplace. They need the backend change that approves these hosts.
+
 ### Changed
 
 - The console's outside uptime check moved from a scheduled GitHub workflow to a Cloud Monitoring check set up from the backend repository. On the Cloudflare free plan, Bot Fight Mode answered every run from GitHub with a 403 while the console was up.
