@@ -85,3 +85,33 @@ export function updateToolSet(
 export function deleteToolSet(id: string) {
   return del(`/tool-sets/${id}`);
 }
+
+export interface ApiMcpAllowedHost {
+  id: string;
+  host: string;
+  created_by_user_id: string;
+  created_at: string;
+  /** Connections on this host. They stop working when it is removed. */
+  servers: number;
+}
+
+export interface ApiMcpAllowedHosts {
+  hosts: ApiMcpAllowedHost[];
+  /** Approved by Saturn for every organization. */
+  builtin: string[];
+  limit: number;
+}
+
+/** Hosts this organization's admins approved for MCP servers. Needs team.read. */
+export function fetchMcpAllowedHosts() {
+  return get<ApiMcpAllowedHosts>("/mcp-servers/allowed-hosts");
+}
+
+/** Needs team.write and a recent sign-in: the API answers 403 "Reauthentication required" otherwise. */
+export function addMcpAllowedHost(host: string) {
+  return post<ApiMcpAllowedHost>("/mcp-servers/allowed-hosts", { host });
+}
+
+export function removeMcpAllowedHost(id: string) {
+  return del(`/mcp-servers/allowed-hosts/${encodeURIComponent(id)}`);
+}

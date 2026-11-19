@@ -196,8 +196,8 @@ export const marketCatalog: MarketEntry[] = [
       zh: "商店的購物車與政策。貼上 https://{shop}.myshopify.com/api/mcp。",
     },
     points: {
-      en: ["Read the cart and shop policies", "The URL is the store domain plus /api/mcp", "Storefront calls do not need a token"],
-      zh: ["讀取購物車與商店政策", "網址是商店網域加上 /api/mcp", "店面呼叫不需要權杖"],
+      en: ["Read the cart and shop policies", "Approve the store’s domain under Settings, then paste its /api/mcp URL", "Storefront calls do not need a token"],
+      zh: ["讀取購物車與商店政策", "先在設定裡核准商店網域，再貼上它的 /api/mcp 網址", "店面呼叫不需要權杖"],
     },
   },
   {
@@ -262,6 +262,102 @@ export const marketCatalog: MarketEntry[] = [
     points: {
       en: ["Search Vercel documentation", "Review projects and deployments", "Read deployment logs"],
       zh: ["搜尋 Vercel 文件", "查看專案與部署", "讀取部署紀錄"],
+    },
+  },
+  {
+    id: "cloudflare",
+    category: "development",
+    endpoint: "https://mcp.cloudflare.com/mcp",
+    publisher: "Cloudflare",
+    docs: "https://developers.cloudflare.com/agents/model-context-protocol/cloudflare/servers-for-cloudflare/",
+    auth: "token",
+    blurb: {
+      en: "The Cloudflare API and developer docs through one Code Mode server.",
+      zh: "透過單一 Code Mode 伺服器使用 Cloudflare API 與開發者文件。",
+    },
+    points: {
+      en: ["Search and call Cloudflare API endpoints", "Search the developer documentation", "Choose the permissions when signing in to Cloudflare"],
+      zh: ["搜尋並呼叫 Cloudflare API 端點", "搜尋開發者文件", "登入 Cloudflare 時選擇授予的權限"],
+    },
+  },
+  {
+    id: "cloud-run",
+    category: "development",
+    endpoint: "https://run.googleapis.com/mcp",
+    publisher: "Google Cloud",
+    docs: "https://docs.cloud.google.com/run/docs/use-cloud-run-mcp",
+    auth: "token",
+    blurb: {
+      en: "Look up and deploy Cloud Run services.",
+      zh: "查看並部署 Cloud Run 服務。",
+    },
+    points: {
+      en: ["List and inspect services", "Deploy from an image, an archive, or file contents", "Access follows your IAM roles on the project"],
+      zh: ["列出並查看服務", "從映像檔、封存檔或檔案內容部署", "權限跟你在專案上的 IAM 角色一致"],
+    },
+  },
+  {
+    id: "cloud-sql-postgres",
+    category: "data",
+    endpoint: "https://sqladmin.googleapis.com/mcp",
+    publisher: "Google Cloud",
+    docs: "https://docs.cloud.google.com/sql/docs/postgres/use-cloudsql-mcp",
+    auth: "token",
+    blurb: {
+      en: "PostgreSQL on Cloud SQL: instances, users, backups, and SQL.",
+      zh: "Cloud SQL 上的 PostgreSQL：執行個體、使用者、備份與 SQL。",
+    },
+    points: {
+      en: ["List and inspect instances and users", "Run SQL, with a separate read-only tool", "execute_sql can write, so add a policy or approval for it"],
+      zh: ["列出並查看執行個體與使用者", "執行 SQL，另有唯讀的查詢工具", "execute_sql 可以寫入，請為它設定政策或審批"],
+    },
+  },
+  {
+    id: "memorystore-redis",
+    category: "data",
+    endpoint: "https://redis.googleapis.com/mcp",
+    publisher: "Google Cloud",
+    docs: "https://docs.cloud.google.com/memorystore/docs/redis/use-memorystore-mcp",
+    auth: "token",
+    blurb: {
+      en: "Memorystore for Redis instances, clusters, and backups.",
+      zh: "Memorystore for Redis 的執行個體、叢集與備份。",
+    },
+    points: {
+      en: ["List and inspect instances and clusters", "Create, update, back up, and fail over", "Includes delete and AUTH string tools, so add a policy for them"],
+      zh: ["列出並查看執行個體與叢集", "建立、更新、備份與容錯移轉", "包含刪除與讀取 AUTH 字串的工具，請為它們設定政策"],
+    },
+  },
+  {
+    id: "alphaxiv",
+    category: "data",
+    endpoint: "https://api.alphaxiv.org/mcp/v1",
+    publisher: "alphaXiv",
+    docs: "https://alphaxiv.org/docs/mcp",
+    auth: "token",
+    blurb: {
+      en: "Search arXiv papers and read them through alphaXiv.",
+      zh: "透過 alphaXiv 搜尋並閱讀 arXiv 論文。",
+    },
+    points: {
+      en: ["Find papers by keyword and semantic search", "Read a paper's full text or ask about its PDF", "Library and follow tools write to your alphaXiv account"],
+      zh: ["用關鍵字與語意搜尋找論文", "讀取論文全文，或針對 PDF 提問", "書庫與追蹤工具會寫入你的 alphaXiv 帳戶"],
+    },
+  },
+  {
+    id: "wandb",
+    category: "development",
+    endpoint: "https://mcp.withwandb.com/mcp",
+    publisher: "Weights & Biases",
+    docs: "https://docs.wandb.ai/platform/mcp-server",
+    auth: "token",
+    blurb: {
+      en: "Runs, Weave traces, artifacts, and reports in W&B. Paste a W&B API key.",
+      zh: "W&B 的 runs、Weave traces、artifacts 與報告。貼上 W&B API 金鑰。",
+    },
+    points: {
+      en: ["Query and compare runs and their history", "Inspect Weave traces and evaluations", "Only report and analysis-run tools write"],
+      zh: ["查詢並比較 runs 與它們的歷史紀錄", "查看 Weave traces 與評估結果", "只有建立報告與分析 run 的工具會寫入"],
     },
   },
   {
@@ -669,17 +765,17 @@ export const marketCatalog: MarketEntry[] = [
   {
     id: "slack",
     category: "communication",
-    endpoint: "",
+    endpoint: "https://mcp.slack.com/mcp",
     publisher: "Slack",
     docs: "https://docs.slack.dev/ai/slack-mcp-server/",
     auth: "token",
     blurb: {
-      en: "Slack’s remote MCP. Paste the URL Slack gives you.",
-      zh: "Slack 的遠端 MCP。貼上 Slack 提供的網址。",
+      en: "Slack’s remote MCP. Paste a user token from your workspace’s internal Slack app.",
+      zh: "Slack 的遠端 MCP。貼上工作區內部 Slack App 的使用者權杖。",
     },
     points: {
-      en: ["Read channels you can access", "Search messages", "The URL comes from Slack after you authorize"],
-      zh: ["讀取你有權限的頻道", "搜尋訊息", "授權後向 Slack 取得網址"],
+      en: ["Read channels you can access", "Search messages", "Slack only lets its listed or internal apps sign in, so paste a token"],
+      zh: ["讀取你有權限的頻道", "搜尋訊息", "Slack 只允許上架或內部 App 登入，所以請貼上權杖"],
     },
   },
   {
@@ -781,6 +877,12 @@ export function marketName(id: string) {
     coinbase: "Coinbase",
     etherscan: "Etherscan",
     vercel: "Vercel",
+    cloudflare: "Cloudflare",
+    "cloud-run": "Cloud Run",
+    "memorystore-redis": "Memorystore for Redis",
+    "cloud-sql-postgres": "Cloud SQL for PostgreSQL",
+    alphaxiv: "alphaXiv",
+    wandb: "Weights & Biases",
     indeed: "Indeed",
     spotify: "Spotify",
     booking: "Booking.com",

@@ -4,6 +4,17 @@ Notable changes to Saturn MCP Console. The format follows [Keep a Changelog](htt
 
 ## [Unreleased]
 
+### Added
+
+- Settings has an **Approved MCP hosts** section. Admins approve the hosts where custom MCP servers may run, after confirming it is them. When a connection is refused because its host is not approved, the marketplace links there. This needs the matching backend change.
+
+- Cloudflare (`mcp.cloudflare.com`), Cloud Run (`run.googleapis.com`), Memorystore for Redis (`redis.googleapis.com`), Cloud SQL for PostgreSQL (`sqladmin.googleapis.com`), alphaXiv for arXiv papers (`api.alphaxiv.org`) and Weights & Biases (`mcp.withwandb.com`) in the marketplace. They need the backend change that approves these hosts.
+
+### Fixed
+
+- The Slack card now uses Slack's fixed endpoint, `https://mcp.slack.com/mcp`, and says to paste a token from an internal Slack app, since Slack does not let other apps sign in. The Shopify card says to approve the store's domain in Settings first.
+- Typing in a field on a phone no longer zooms the page. iOS Safari zooms into any field with text under 16px; the rule that set 16px on phones was in the base layer, where the `text-[13px]` on each field overrode it.
+
 ### Changed
 
 - The console's outside uptime check moved from a scheduled GitHub workflow to a Cloud Monitoring check set up from the backend repository. On the Cloudflare free plan, Bot Fight Mode answered every run from GitHub with a 403 while the console was up.

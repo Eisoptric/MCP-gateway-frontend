@@ -133,3 +133,14 @@ test("dropped requests are retried, and an API without attempts falls back to th
   assert.equal(await waitForMcpSignIn(old), "approved");
   assert.equal(checks, 3);
 });
+
+test("a host the organization has not approved points to Settings", async () => {
+  const { isHostNotApproved } = await import("../src/lib/mcp-authorize.ts");
+  const refused = new Error("MCP endpoint host is not approved");
+  assert.equal(isHostNotApproved(refused), true);
+  assert.equal(mcpOauthErrorText(refused, t), "marketplace.hostNotApproved");
+  // Other endpoint refusals keep the API's own words.
+  assert.equal(isHostNotApproved(new Error("MCP endpoint address is not allowed")), false);
+  assert.equal(mcpOauthErrorText(new Error("MCP endpoint address is not allowed"), t), "MCP endpoint address is not allowed");
+  assert.equal(isHostNotApproved("MCP endpoint host is not approved"), false);
+});
