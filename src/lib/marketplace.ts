@@ -31,12 +31,12 @@ export const marketCatalog: MarketEntry[] = [
     docs: "https://developers.google.com/workspace/guides/configure-mcp-servers",
     auth: "token",
     blurb: {
-      en: "Search, read, and draft mail in Gmail.",
-      zh: "搜尋、讀取並撰寫 Gmail。",
+      en: "Search, read, draft, and organize mail in Gmail.",
+      zh: "搜尋、讀取、撰寫並整理 Gmail。",
     },
     points: {
-      en: ["Search and read messages", "Draft and compose mail", "Uses the Gmail access you approve"],
-      zh: ["搜尋並讀取郵件", "撰寫草稿與新郵件", "使用你核准的 Gmail 權限"],
+      en: ["Search and read messages, and write drafts", "Label, trash, and mark spam to organize mail", "Cannot delete mail permanently; trashed mail can be restored"],
+      zh: ["搜尋、讀取郵件並撰寫草稿", "加標籤、丟到垃圾桶、標記垃圾郵件來整理信件", "無法永久刪除郵件；丟到垃圾桶的郵件可以復原"],
     },
   },
   {
@@ -48,12 +48,12 @@ export const marketCatalog: MarketEntry[] = [
     docs: "https://developers.google.com/workspace/calendar/api/guides/configure-mcp-server",
     auth: "token",
     blurb: {
-      en: "Events and availability in Google Calendar.",
-      zh: "Google Calendar 的行程與空檔。",
+      en: "Read, schedule, and update events in Google Calendar.",
+      zh: "讀取、安排並更新 Google Calendar 的行程。",
     },
     points: {
-      en: ["Look up calendars and events", "Check free and busy time", "Read events you can access"],
-      zh: ["查看日曆與行程", "查詢有空與忙碌時段", "讀取你有權限的行程"],
+      en: ["Look up calendars, events, and free time", "Create, update, and delete events", "Accept or decline invitations"],
+      zh: ["查看日曆、行程與空檔", "建立、更新與刪除行程", "接受或拒絕邀請"],
     },
   },
   {

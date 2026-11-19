@@ -17,6 +17,8 @@ Notable changes to Saturn MCP Console. The format follows [Keep a Changelog](htt
 
 ### Changed
 
+- The Gmail card says it can also organize mail (labels, trash, spam) and cannot delete mail permanently, to match the backend's switch to `gmail.modify`.
+- The Google Calendar card says it can create, update and delete events and answer invitations, to match the backend's switch to `calendar.events`.
 - The tool sets note says what the backend now does: a policy rule for the tool decides first, and with none, the tool runs or waits for approval as set in the tool set.
 - A tool checked into a tool set, one by one or with **Select shown**, now starts at **Require approval**. Switch it to **Allow** on purpose.
 - The console's outside uptime check moved from a scheduled GitHub workflow to a Cloud Monitoring check set up from the backend repository. On the Cloudflare free plan, Bot Fight Mode answered every run from GitHub with a 403 while the console was up.
