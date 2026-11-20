@@ -24,7 +24,7 @@ Connect MCP servers, choose which tools each agent can see, write the policy tha
 
 [MCP Gateway](https://eisoptric.com) sits between your AI agents and your MCP servers. Agents connect to one MCP endpoint and sign in with OAuth; Eisoptric holds the upstream credentials, shows each agent only the tools it is allowed to use, evaluates a policy on every call, holds sensitive calls for human approval, and records each step.
 
-This repository is the console for it: a Next.js app that runs on Cloud Run at **[dashboard.eisoptric.com](https://dashboard.eisoptric.com)**. It holds no data of its own. Every request goes to the Eisoptric API, a FastAPI service in the separate [MCP-gateway-backend](https://github.com/eisoptric/MCP-gateway-backend) repository, served at `https://api.eisoptric.com`.
+This repository is the console for it: a Next.js app that runs on Cloud Run at **[console.eisoptric.com](https://console.eisoptric.com)**. It holds no data of its own. Every request goes to the Eisoptric API, a FastAPI service in the separate [MCP-gateway-backend](https://github.com/eisoptric/MCP-gateway-backend) repository, served at `https://api.eisoptric.com`.
 
 - **Free.** Every feature is on every account. If Eisoptric helps you, you can [sponsor the project on GitHub](https://github.com/sponsors/eisoptric).
 - **Bilingual.** Every screen is in English and Traditional Chinese (Taiwan).

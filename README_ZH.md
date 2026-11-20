@@ -24,7 +24,7 @@
 
 [MCP Gateway](https://eisoptric.com) 位於你的 AI Agent 與 MCP 伺服器之間。Agent 只連到一個 MCP 端點，並以 OAuth 登入；Eisoptric 保管上游的憑證、只讓每個 Agent 看到它被允許使用的工具、對每一次呼叫評估政策、把敏感的呼叫留待人工核准，並記錄每一個步驟。
 
-這個 repository 是它的主控台：一個在 Cloud Run 上執行的 Next.js 應用程式，網址是 **[dashboard.eisoptric.com](https://dashboard.eisoptric.com)**。主控台本身不保存任何資料，每個請求都送到 Eisoptric API。Eisoptric API 是獨立的 [MCP-gateway-backend](https://github.com/eisoptric/MCP-gateway-backend) repository 中的 FastAPI 服務，位於 `https://api.eisoptric.com`。
+這個 repository 是它的主控台：一個在 Cloud Run 上執行的 Next.js 應用程式，網址是 **[console.eisoptric.com](https://console.eisoptric.com)**。主控台本身不保存任何資料，每個請求都送到 Eisoptric API。Eisoptric API 是獨立的 [MCP-gateway-backend](https://github.com/eisoptric/MCP-gateway-backend) repository 中的 FastAPI 服務，位於 `https://api.eisoptric.com`。
 
 - **免費。** 每個帳號都能使用所有功能。如果 Eisoptric 對你有幫助，可以[在 GitHub 上贊助這個專案](https://github.com/sponsors/eisoptric)。
 - **雙語。** 每個畫面都有英文與繁體中文（台灣）。
