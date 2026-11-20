@@ -72,8 +72,9 @@ export function ReauthForm({ onReady, busy }: { onReady: () => void; busy?: bool
       await reauthenticateWithPasskey();
       onReady();
     } catch (err) {
+      // Using a passkey, not creating one: a dismissed or failed prompt is not a missing feature.
       if (err instanceof ApiError) setError(err.message);
-      else setError(t("profile.passkeyUnsupported"));
+      else setError(t("login.passkeyFailed"));
     } finally {
       setPending(false);
     }
@@ -138,7 +139,7 @@ export function ReauthForm({ onReady, busy }: { onReady: () => void; busy?: bool
             (secondFactor === "totp" && !totpCode.trim())
           }
         >
-          {t("login.confirmTitle")}
+          {t("profile.reauthConfirm")}
         </Button>
         <Button type="button" variant="outline" disabled={pending || busy} onClick={() => void sendCode()}>
           {t("profile.reauthSend")}

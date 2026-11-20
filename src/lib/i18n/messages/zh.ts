@@ -936,6 +936,7 @@ export const zh: Messages = {
     noticeAuditBody: "政策拒絕呼叫，或代理人使用未允許的工具時寄信。",
     reauthBody: "請輸入目前密碼、電子郵件驗證碼，或使用 Passkey 後再繼續。",
     reauthSend: "寄送驗證碼",
+    reauthConfirm: "繼續",
     reauthCode: "電子郵件驗證碼",
     reauthTotpBody: "此帳號使用驗證器 App。請輸入 6 位數代碼或一組備援碼後再繼續。",
     reauthTotpCode: "驗證器代碼或備援碼",
