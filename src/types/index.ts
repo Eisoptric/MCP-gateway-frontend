@@ -10,7 +10,7 @@ export type RunStatus =
 export type ApprovalStatus = "pending" | "approved" | "rejected" | "expired" | "cancelled" | "invalidated";
 export type ToolConnection = "connected" | "degraded" | "disconnected";
 export type ToolPermission = "allow" | "approval" | "denied";
-export type ActorKind = "agent" | "human" | "saturn" | "tool" | "wallet";
+export type ActorKind = "agent" | "human" | "gateway" | "tool" | "wallet";
 export type ServiceStatus = "operational" | "degraded" | "down";
 
 export type AgentResponseStyle = "concise" | "professional" | "detailed";

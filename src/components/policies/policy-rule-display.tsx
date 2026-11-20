@@ -27,7 +27,7 @@ export function PolicyRuleDisplay({ rule }: { rule: PolicyRule }) {
   return (
     <div className="border border-border px-5 py-5">
       {rule.tool ? <div className="mb-4 font-mono text-[13px]">{rule.tool}</div> : null}
-      <div className="saturn-label">{t("policies.if")}</div>
+      <div className="gateway-label">{t("policies.if")}</div>
       <div className="mt-3 space-y-3">
         {conditions.length === 0 ? (
           <div className="text-[15px] text-muted-foreground">true</div>
@@ -55,7 +55,7 @@ export function PolicyRuleDisplay({ rule }: { rule: PolicyRule }) {
           ))
         )}
       </div>
-      <div className="mt-6 saturn-label">{t("policies.then")}</div>
+      <div className="mt-6 gateway-label">{t("policies.then")}</div>
       <div className="mt-3 text-[15px]">{t(decisionKey)}</div>
     </div>
   );

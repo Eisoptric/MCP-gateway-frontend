@@ -38,6 +38,6 @@ export const useLocaleStore = create<LocaleState>()(
       locale: "zh",
       setLocale: (locale) => set({ locale }),
     }),
-    { name: "saturn-locale" }
+    { name: "gateway-locale" }
   )
 );

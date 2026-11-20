@@ -23,7 +23,7 @@ const {
 } = crypto;
 
 const text = (value) => new TextEncoder().encode(value);
-const USER = { id: "user_1", email: "member@saturn.ai", name: "Member", status: "active" };
+const USER = { id: "user_1", email: "member@example.com", name: "Member", status: "active" };
 const ORG = { id: "org_1", name: "Org" };
 
 function signIn(email = USER.email) {
@@ -35,7 +35,7 @@ function stubFetch(routes) {
   const calls = [];
   const original = globalThis.fetch;
   globalThis.fetch = async (url, init = {}) => {
-    const key = `${init.method ?? "GET"} ${String(url).replace("/saturn-api", "")}`;
+    const key = `${init.method ?? "GET"} ${String(url).replace("/gateway-api", "")}`;
     const body = init.body ? JSON.parse(init.body) : undefined;
     calls.push({ key, body });
     if (!(key in routes)) return new Response(JSON.stringify({ detail: "Not found" }), { status: 404 });
@@ -74,13 +74,13 @@ test("the recovery key restores the organization key, and only for its own organ
 
 test("a member key backup opens with the same password and email, and with nothing else", async () => {
   const { privateKey } = await generateMlKem();
-  const backup = await passwordBackup("correct horse", "user_1", privateKey, "member@saturn.ai");
+  const backup = await passwordBackup("correct horse", "user_1", privateKey, "member@example.com");
   assert.equal(backup.kdf, "CLIENT-SECRET");
-  assert.deepEqual(await openPasswordBackup("correct horse", "user_1", backup, "member@saturn.ai"), privateKey);
-  await assert.rejects(openPasswordBackup("battery staple", "user_1", backup, "member@saturn.ai"));
+  assert.deepEqual(await openPasswordBackup("correct horse", "user_1", backup, "member@example.com"), privateKey);
+  await assert.rejects(openPasswordBackup("battery staple", "user_1", backup, "member@example.com"));
   // The wrap key comes from the email as well, which is why an email change must re-wrap it.
-  await assert.rejects(openPasswordBackup("correct horse", "user_1", backup, "moved@saturn.ai"));
-  await assert.rejects(openPasswordBackup("correct horse", "user_2", backup, "member@saturn.ai"));
+  await assert.rejects(openPasswordBackup("correct horse", "user_1", backup, "moved@example.com"));
+  await assert.rejects(openPasswordBackup("correct horse", "user_2", backup, "member@example.com"));
 });
 
 test("a DEK proof is bound to the record it was made for", async () => {
@@ -155,10 +155,10 @@ test("confirming a new email sends the password value and the member key for the
   const stored = await passwordBackup("correct horse", USER.id, privateKey, USER.email);
   const { calls, restore } = stubFetch({
     "GET /org/payload-keys/member/backup": { ...stored, member_key_id: "mpk_1", public_key: bytesToHex(publicKey) },
-    "POST /auth/email/confirm": { ...USER, email: "moved@saturn.ai", organization: ORG, agents: [], mcp_servers: [] },
+    "POST /auth/email/confirm": { ...USER, email: "moved@example.com", organization: ORG, agents: [], mcp_servers: [] },
   });
   try {
-    await confirmEmailChangeKeepingKey("111111", "222222", "correct horse", " Moved@Saturn.ai ");
+    await confirmEmailChangeKeepingKey("111111", "222222", "correct horse", " Moved@Example.com ");
   } finally {
     restore();
   }
@@ -166,20 +166,20 @@ test("confirming a new email sends the password value and the member key for the
   assert.equal(sent.current_code, "111111");
   assert.equal(sent.next_code, "222222");
   // Proof with the value for the old address; the value to store is the one for the new address.
-  assert.equal(sent.current_password, await loginVerifier("correct horse", "member@saturn.ai"));
-  assert.equal(sent.new_password, await loginVerifier("correct horse", "moved@saturn.ai"));
+  assert.equal(sent.current_password, await loginVerifier("correct horse", "member@example.com"));
+  assert.equal(sent.new_password, await loginVerifier("correct horse", "moved@example.com"));
   assert.notEqual(sent.current_password, sent.new_password);
-  assert.deepEqual(await openPasswordBackup("correct horse", USER.id, sent.member_backup, "moved@saturn.ai"), privateKey);
-  assert.equal(useAuthStore.getState().user.email, "moved@saturn.ai");
+  assert.deepEqual(await openPasswordBackup("correct horse", USER.id, sent.member_backup, "moved@example.com"), privateKey);
+  assert.equal(useAuthStore.getState().user.email, "moved@example.com");
 });
 
 test("confirming a new email without the password sends only the codes", async () => {
   signIn();
   const { calls, restore } = stubFetch({
-    "POST /auth/email/confirm": { ...USER, email: "moved@saturn.ai", organization: ORG, agents: [], mcp_servers: [] },
+    "POST /auth/email/confirm": { ...USER, email: "moved@example.com", organization: ORG, agents: [], mcp_servers: [] },
   });
   try {
-    await confirmEmailChangeKeepingKey("111111", "222222", "", "moved@saturn.ai");
+    await confirmEmailChangeKeepingKey("111111", "222222", "", "moved@example.com");
   } finally {
     restore();
   }

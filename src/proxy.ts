@@ -81,6 +81,6 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // /saturn-api and /_next/image are no longer exempt: the origin gate covers every dynamic route.
+  // /gateway-api and /_next/image are no longer exempt: the origin gate covers every dynamic route.
   matcher: ["/((?!_next/static|favicon.ico|logo.png).*)"],
 };

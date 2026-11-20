@@ -12,7 +12,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Saturn",
+  title: "Eisoptric",
   description: "Enterprise AI control plane",
   // The tab and home-screen icons come from app/icon.png and app/apple-icon.png, which Next
   // links at their real sizes. Pointing both at the full logo made every visit fetch 279 KB.

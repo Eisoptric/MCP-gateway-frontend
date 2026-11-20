@@ -14,7 +14,7 @@ export function profileIdentity(input: {
   return `${input.organizationId}:${input.userId}`;
 }
 
-export function saturnMcpAgents(agents: Agent[], identity: string): Agent[] {
+export function gatewayMcpAgents(agents: Agent[], identity: string): Agent[] {
   if (!identity) return [];
-  return agents.filter((agent) => agent.origin === "saturn_mcp" && agent.profileId === identity);
+  return agents.filter((agent) => agent.origin === "gateway_mcp" && agent.profileId === identity);
 }

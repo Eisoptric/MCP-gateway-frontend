@@ -97,7 +97,7 @@ export interface ApiMcpAllowedHost {
 
 export interface ApiMcpAllowedHosts {
   hosts: ApiMcpAllowedHost[];
-  /** Approved by Saturn for every organization. */
+  /** Approved by Eisoptric for every organization. */
   builtin: string[];
   limit: number;
 }

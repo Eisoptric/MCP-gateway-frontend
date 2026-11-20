@@ -9,7 +9,7 @@ import type { PolicyDefinition, PolicyNodeKind } from "@/types";
 
 const kinds: PolicyNodeKind[] = ["subject", "tool", "condition", "logic", "decision", "enforcement"];
 
-export const NODE_DRAG_TYPE = "application/saturn-node";
+export const NODE_DRAG_TYPE = "application/gateway-node";
 
 export function isNodeKind(value: string): value is PolicyNodeKind {
   return kinds.includes(value as PolicyNodeKind);

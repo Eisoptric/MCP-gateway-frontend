@@ -3,10 +3,10 @@ import { isIP } from "node:net";
 
 // Pure helpers for src/proxy.ts. Kept free of next/server so they run under node --test.
 
-export const ORIGIN_HEADER = "x-saturn-origin-auth";
-export const CONSOLE_AUTH_HEADER = "x-saturn-console-auth";
-export const CONSOLE_CLIENT_IP_HEADER = "x-saturn-client-ip";
-export const API_PREFIX = "/saturn-api";
+export const ORIGIN_HEADER = "x-eisoptric-origin-auth";
+export const CONSOLE_AUTH_HEADER = "x-eisoptric-console-auth";
+export const CONSOLE_CLIENT_IP_HEADER = "x-eisoptric-client-ip";
+export const API_PREFIX = "/gateway-api";
 
 type Env = Record<string, string | undefined>;
 type HeaderGetter = (name: string) => string | null;
@@ -31,7 +31,7 @@ export function originAllowed(pathname: string, header: HeaderGetter, env: Env):
   return secretMatches(header(name) || "", [expected, env.ORIGIN_AUTH_SECRET_PREVIOUS || ""]);
 }
 
-// The API route prefixes the console calls through /saturn-api. Anything else on the API
+// The API route prefixes the console calls through /gateway-api. Anything else on the API
 // (OAuth consent pages, the MCP endpoint, platform admin) is not served on the console origin.
 const API_PREFIXES = new Set([
   "activity",
@@ -61,8 +61,8 @@ function folded(pathname: string): string {
 /**
  * Whether a request is headed for the API proxy, however its path is spelled.
  *
- * The rewrite in next.config.ts matches /saturn-api without regard to case, so a check for the
- * exact spelling would let "/Saturn-Api/admin/orgs" skip the allow-list below, and with it the
+ * The rewrite in next.config.ts matches /gateway-api without regard to case, so a check for the
+ * exact spelling would let "/Gateway-Api/admin/orgs" skip the allow-list below, and with it the
  * removal of client-sent console headers, and still be proxied. Anything that could match the
  * rewrite is treated as an API request here; apiPathAllowed then accepts only the exact prefix.
  */

@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 // Read once, when this file loads during `next build`: the rewrite below is compiled into the
 // build output. Setting API_URL on the running container changes nothing.
 const apiUrl = (
-  process.env.API_URL ?? "https://api.saturn-core.com"
+  process.env.API_URL ?? "https://api.eisoptric.com"
 ).replace(
   /\/$/,
   ""
@@ -56,7 +56,7 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
-        source: "/saturn-api/:path*",
+        source: "/gateway-api/:path*",
         destination: `${apiUrl}/:path*`,
       },
     ];

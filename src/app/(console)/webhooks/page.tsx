@@ -26,9 +26,9 @@ import { useI18n } from "@/lib/i18n";
 const fieldClass =
   "mt-1.5 h-9 w-full rounded-lg border border-border bg-background px-3 text-[13px] text-foreground outline-none focus:border-ring";
 
-const EVENT_FORMAT = `Saturn-Webhook-Id: whe_0123abcd
-Saturn-Webhook-Timestamp: 1791763200
-Saturn-Webhook-Signature: v1=<hex(HMAC-SHA256(secret, "1791763200." + body))>
+const EVENT_FORMAT = `Eisoptric-Webhook-Id: whe_0123abcd
+Eisoptric-Webhook-Timestamp: 1791763200
+Eisoptric-Webhook-Signature: v1=<hex(HMAC-SHA256(secret, "1791763200." + body))>
 Content-Type: application/json
 
 {
@@ -44,7 +44,7 @@ Content-Type: application/json
     "tool": "pay.send"
   },
   "id": "whe_0123abcd",
-  "schema": "saturn.webhook.v1",
+  "schema": "eisoptric.webhook.v1",
   "type": "approval.granted"
 }`;
 

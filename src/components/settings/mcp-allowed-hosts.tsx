@@ -14,8 +14,8 @@ const fieldClass =
   "h-9 w-full rounded-lg border border-border bg-background px-3 text-base text-foreground outline-none focus:border-ring md:text-[13px]";
 
 /**
- * Hosts this organization's admins approve for MCP servers, beside the ones Saturn approves for
- * everyone. Adding one widens where Saturn sends requests, so the API asks for a fresh sign-in.
+ * Hosts this organization's admins approve for MCP servers, beside the ones Eisoptric approves for
+ * everyone. Adding one widens where Eisoptric sends requests, so the API asks for a fresh sign-in.
  */
 export function McpAllowedHosts({ canEdit }: { canEdit: boolean }) {
   const { t, locale } = useI18n();

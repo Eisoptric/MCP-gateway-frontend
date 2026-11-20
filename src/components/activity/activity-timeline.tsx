@@ -16,7 +16,7 @@ const kindLabel: Record<ActorKind, string> = {
   human: "activity.kindHuman",
   agent: "activity.kindAgent",
   tool: "activity.kindTool",
-  saturn: "activity.kindSaturn",
+  gateway: "activity.kindGateway",
   wallet: "activity.kindWallet",
 };
 

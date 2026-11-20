@@ -139,7 +139,7 @@ export function PayloadEncryption() {
           <a
             className="mt-2 inline-block text-[13px] underline"
             href={`data:text/plain,${encodeURIComponent(recovery)}`}
-            download="saturn-recovery-key.txt"
+            download="eisoptric-recovery-key.txt"
           >
             {t("settings.payloadRecovery")}
           </a>

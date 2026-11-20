@@ -19,7 +19,7 @@ export default function MappingPage() {
         <ToolSetEditor
           servers={mcpServers}
           toolSets={data?.toolSets ?? []}
-          agents={(data?.agents ?? []).filter((agent) => agent.origin === "saturn_mcp")}
+          agents={(data?.agents ?? []).filter((agent) => agent.origin === "gateway_mcp")}
           toolSetLimit={toolSetLimit}
           canWrite={canWrite}
         />

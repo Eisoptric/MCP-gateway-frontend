@@ -76,7 +76,7 @@ export function ApprovalPanel({
         className="w-[min(420px,calc(100%-2rem))] max-w-none gap-0 rounded-md p-0 ring-border sm:max-w-none"
       >
         <div className="border-b border-border px-6 py-5">
-          <DialogTitle className="saturn-label">{t("approvals.request")}</DialogTitle>
+          <DialogTitle className="gateway-label">{t("approvals.request")}</DialogTitle>
           <DialogDescription className="sr-only">
             {t("approvals.reviewAria")}
           </DialogDescription>

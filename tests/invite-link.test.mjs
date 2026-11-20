@@ -3,9 +3,9 @@ import test from "node:test";
 import { readInviteLink } from "../src/lib/invite-link.ts";
 
 test("an invite link is read from the query string the emails use today", () => {
-  assert.deepEqual(readInviteLink("?token=abc%2F123&email=New.Member%2Btag@Saturn.ai", ""), {
+  assert.deepEqual(readInviteLink("?token=abc%2F123&email=New.Member%2Btag@Example.com", ""), {
     token: "abc/123",
-    email: "new.member+tag@saturn.ai",
+    email: "new.member+tag@example.com",
   });
 });
 

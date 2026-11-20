@@ -110,7 +110,7 @@ export const GENERIC_DUTY =
   "Your responsibility is to complete the operator's request using your assigned tools.";
 
 export function defaultInstructions(name = "", description = "") {
-  const who = name.trim() || "a Saturn agent";
+  const who = name.trim() || "an Eisoptric agent";
   const duty = description.trim() || GENERIC_DUTY;
   return `You are ${who}.\n\n${duty}\n\nDo not perform actions outside your assigned role.\n\nWhen a tool result is enough, answer in one short sentence.`;
 }

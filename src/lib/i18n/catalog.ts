@@ -37,7 +37,7 @@ export async function loadEither(
   }
 }
 
-const RELOAD_FLAG = "saturn-i18n-reload";
+const RELOAD_FLAG = "gateway-i18n-reload";
 type FlagStorage = Pick<Storage, "getItem" | "setItem" | "removeItem">;
 
 /**

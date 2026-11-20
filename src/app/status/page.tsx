@@ -98,7 +98,7 @@ export default function StatusPage() {
     <div className="h-screen overflow-y-auto bg-background">
       <header className="flex h-12 items-center justify-between border-b border-border px-5">
         <Link href="/" className="text-[13px] font-medium tracking-[0.18em]">
-          SATURN
+          GATEWAY
         </Link>
         <div className="flex items-center gap-1.5 text-[11px] tracking-[0.04em]">
           <button

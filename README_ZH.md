@@ -1,15 +1,15 @@
 <div align="center">
 
-<img src="public/logo.png" alt="Saturn" width="112" height="112" />
+<img src="public/logo.png" alt="Eisoptric" width="112" height="112" />
 
-# Saturn MCP Console
+# MCP Gateway Console
 
-**Saturn MCP 的網頁主控台。Saturn MCP 是介於 AI Agent 與工具之間的 Gateway。**
+**MCP Gateway 的網頁主控台。MCP Gateway 是介於 AI Agent 與工具之間的 Gateway。**
 
 在同一個主控台連接 MCP 伺服器、決定每個 Agent 看得到哪些工具、撰寫決定每一次呼叫的政策、核准需要人工確認的操作，並查閱稽核紀錄。
 
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Check](https://github.com/Saturn-Technology-Project/Saturn-MCP-Frontend/actions/workflows/check.yml/badge.svg)](https://github.com/Saturn-Technology-Project/Saturn-MCP-Frontend/actions/workflows/check.yml)
+[![Check](https://github.com/eisoptric/MCP-gateway-frontend/actions/workflows/check.yml/badge.svg)](https://github.com/eisoptric/MCP-gateway-frontend/actions/workflows/check.yml)
 ![Next.js](https://img.shields.io/badge/Next.js-16.3-000000.svg?logo=next.js&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-61DAFB.svg?logo=react&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6.svg?logo=typescript&logoColor=white)
@@ -22,11 +22,11 @@
 
 ## 這是什麼
 
-[Saturn MCP](https://saturn-core.com) 位於你的 AI Agent 與 MCP 伺服器之間。Agent 只連到一個 MCP 端點，並以 OAuth 登入；Saturn 保管上游的憑證、只讓每個 Agent 看到它被允許使用的工具、對每一次呼叫評估政策、把敏感的呼叫留待人工核准，並記錄每一個步驟。
+[MCP Gateway](https://eisoptric.com) 位於你的 AI Agent 與 MCP 伺服器之間。Agent 只連到一個 MCP 端點，並以 OAuth 登入；Eisoptric 保管上游的憑證、只讓每個 Agent 看到它被允許使用的工具、對每一次呼叫評估政策、把敏感的呼叫留待人工核准，並記錄每一個步驟。
 
-這個 repository 是它的主控台：一個在 Cloud Run 上執行的 Next.js 應用程式，網址是 **[dashboard.saturn-core.com](https://dashboard.saturn-core.com)**。主控台本身不保存任何資料，每個請求都送到 Saturn API。Saturn API 是獨立的 [Saturn-MCP-Backend](https://github.com/Saturn-Technology-Project/Saturn-MCP-Backend) repository 中的 FastAPI 服務，位於 `https://api.saturn-core.com`。
+這個 repository 是它的主控台：一個在 Cloud Run 上執行的 Next.js 應用程式，網址是 **[dashboard.eisoptric.com](https://dashboard.eisoptric.com)**。主控台本身不保存任何資料，每個請求都送到 Eisoptric API。Eisoptric API 是獨立的 [MCP-gateway-backend](https://github.com/eisoptric/MCP-gateway-backend) repository 中的 FastAPI 服務，位於 `https://api.eisoptric.com`。
 
-- **免費。** 每個帳號都能使用所有功能。如果 Saturn 對你有幫助，可以[在 GitHub 上贊助這個專案](https://github.com/sponsors/Saturn-Technology-Project)。
+- **免費。** 每個帳號都能使用所有功能。如果 Eisoptric 對你有幫助，可以[在 GitHub 上贊助這個專案](https://github.com/sponsors/eisoptric)。
 - **雙語。** 每個畫面都有英文與繁體中文（台灣）。
 - **Agent 也能操作。** 每個控制項都有輔助使用名稱，電腦操作 Agent 可以跟人一樣操作主控台（[說明](#無障礙與電腦操作)）。
 
@@ -39,9 +39,9 @@
 | ✅ **核准** | `/approvals` | 被政策攔下、等待核准的工具呼叫：Agent、工具、參數、觸發的規則、風險、各群組的進度與期限。可以核准或拒絕。核准不代表工具已經執行；執行狀態另外顯示。 |
 | 🔁 **重送** | `/approvals/resubmit` | 已核准、等待 Agent 再次送出的呼叫，以及到期前剩下的時間。 |
 | 🏠 **首頁** | `/overview` | Agent、已連接的 MCP 伺服器、工具呼叫與待核准項目的數量，工具使用量，以及最近的活動。每 10 秒更新一次。 |
-| 🧩 **市集** | `/tools` | 依分類列出各發行者提供的遠端 MCP 伺服器。可以在彈出視窗中以供應商的 OAuth 登入連接，或貼上 access token；其他伺服器可以用網址加入。Token 保存在 Saturn。 |
+| 🧩 **市集** | `/tools` | 依分類列出各發行者提供的遠端 MCP 伺服器。可以在彈出視窗中以供應商的 OAuth 登入連接，或貼上 access token；其他伺服器可以用網址加入。Token 保存在 Eisoptric。 |
 | 🔗 **連線** | `/tools/connections` | 這個組織已連接的 MCP 伺服器：狀態、工具、使用量、最近的呼叫。可以重新整理工具清單、重新連線、更換 token 或移除伺服器。 |
-| 🤖 **Agent** | `/agents` | 已連到 Saturn MCP 的 Agent、註冊者，以及它們的工具。**Connect Agents** 會列出要貼進 MCP 用戶端的內容：端點（`<API 來源>/mcp`）、HTTP 傳輸、OAuth 登入、`saturn.mcp` scope 與 `X-Saturn-Profile` 標頭，並附上可直接使用的用戶端設定。 |
+| 🤖 **Agent** | `/agents` | 已連到 MCP Gateway 的 Agent、註冊者，以及它們的工具。**Connect Agents** 會列出要貼進 MCP 用戶端的內容：端點（`<API 來源>/mcp`）、HTTP 傳輸、OAuth 登入、`eisoptric.mcp` scope 與 `X-Eisoptric-Profile` 標頭，並附上可直接使用的用戶端設定。 |
 | 🎛️ **工具對應** | `/tools/mapping` | 工具集：使用這個集合的 Agent 可以找到哪些工具，以及每個工具預設直接執行或需要核准。可以把工具集指派給 Agent。 |
 | 🛡️ **政策** | `/policies` | 有版本的執行期政策，以 IF / THEN 規則判斷工具參數（允許、需要核准並設定各群組的法定人數、拒絕）。可以在畫布、表單或 JSON 上編輯；以範本（Read Only、Balanced、Strict）從工具集產生草稿，並即時看到模型的進度；請模型修改草稿；用一次呼叫測試政策；驗證、檢查它會允許什麼，然後啟用。政策中的拒絕會蓋過工具集中的允許。 |
 | 📜 **稽核紀錄** | `/activity` | 每次呼叫的事件鏈：請求、評估、核准、執行。可以篩選並匯出為 JSON。有權限的成員可以在瀏覽器中解密保存的請求與回應。 |
@@ -51,7 +51,7 @@
 
 | 頁面 | 路由 | 用途 |
 |---|---|---|
-| 👤 **個人資料** | `/profile` | 名稱、照片、變更電子郵件（兩個信箱各收一組驗證碼）、密碼、深淺模式、登入驗證（電子郵件驗證碼與通行金鑰），以及 Saturn 要寄信通知你的事件。 |
+| 👤 **個人資料** | `/profile` | 名稱、照片、變更電子郵件（兩個信箱各收一組驗證碼）、密碼、深淺模式、登入驗證（電子郵件驗證碼與通行金鑰），以及 Eisoptric 要寄信通知你的事件。 |
 | 👥 **團隊** | `/team` | 僅限組織帳號。成員、職稱，以及對 Agent、政策、核准與團隊的 `none` / `read` / `write` 權限；以電子郵件寄送邀請；核准群組。 |
 | 🏢 **組織** | `/settings` | 組織名稱與標誌、payload 加密（建立組織金鑰、保存復原金鑰、以復原金鑰解鎖），以及成員數。 |
 | 🌐 **語言** | | English 或繁體中文，儲存在你的帳號。 |
@@ -66,13 +66,13 @@
 ### 連到正式環境的 API
 
 ```bash
-git clone https://github.com/Saturn-Technology-Project/Saturn-MCP-Frontend.git
-cd Saturn-MCP-Frontend
+git clone https://github.com/eisoptric/MCP-gateway-frontend.git
+cd MCP-gateway-frontend
 npm ci
 npm run dev
 ```
 
-開啟 [http://localhost:3000](http://localhost:3000)。不做任何設定時，主控台會連到 `https://api.saturn-core.com`，所以要用 Saturn 帳號登入，或在 `/register` 建立帳號。
+開啟 [http://localhost:3000](http://localhost:3000)。不做任何設定時，主控台會連到 `https://api.eisoptric.com`，所以要用 Eisoptric 帳號登入，或在 `/register` 建立帳號。
 
 以 Docker Compose 執行正式建置版本：
 
@@ -84,7 +84,7 @@ docker compose up --build
 
 ### 連到本機的 API
 
-先從 [Saturn-MCP-Backend](https://github.com/Saturn-Technology-Project/Saturn-MCP-Backend) repository 啟動 API（它的 `docker compose up --build` 會在 `http://localhost:8000` 提供服務，管理員帳號來自其 `.env` 中的 `SEED_USER_EMAIL` 與 `SEED_USER_PASSWORD`）。接著：
+先從 [MCP-gateway-backend](https://github.com/eisoptric/MCP-gateway-backend) repository 啟動 API（它的 `docker compose up --build` 會在 `http://localhost:8000` 提供服務，管理員帳號來自其 `.env` 中的 `SEED_USER_EMAIL` 與 `SEED_USER_PASSWORD`）。接著：
 
 ```bash
 API_URL=http://localhost:8000 NEXT_PUBLIC_WS_URL=http://localhost:8000 npm run dev
@@ -96,10 +96,10 @@ API_URL=http://localhost:8000 NEXT_PUBLIC_WS_URL=http://localhost:8000 npm run d
 
 | 變數 | 預設值 | 用途 |
 |---|---|---|
-| `API_URL` | `https://api.saturn-core.com` | `/saturn-api/*` 要轉送到的位置。在載入 `next.config.ts` 時讀取，所以 Docker 映像檔會把它建置進去（`--build-arg API_URL=…`）。 |
-| `NEXT_PUBLIC_WS_URL` | `https://api.saturn-core.com` | 瀏覽器看到的 API 公開來源。用來在 Agent 頁面顯示 MCP 端點、作為 Agent passkey 交接的送出目標，並列入 Content-Security-Policy。建置時內嵌。未設定時會讀取 `NEXT_PUBLIC_API_URL`。 |
+| `API_URL` | `https://api.eisoptric.com` | `/gateway-api/*` 要轉送到的位置。在載入 `next.config.ts` 時讀取，所以 Docker 映像檔會把它建置進去（`--build-arg API_URL=…`）。 |
+| `NEXT_PUBLIC_WS_URL` | `https://api.eisoptric.com` | 瀏覽器看到的 API 公開來源。用來在 Agent 頁面顯示 MCP 端點、作為 Agent passkey 交接的送出目標，並列入 Content-Security-Policy。建置時內嵌。未設定時會讀取 `NEXT_PUBLIC_API_URL`。 |
 | `ORIGIN_AUTH_SECRET` | 未設定 | 設定後，除了 `/health` 以外的每個請求都必須在來源標頭中帶上這個值，否則回傳 `403`。在 Cloud Run 上（有設定 `K_SERVICE`），未設定這個值時主控台會拒絕所有請求。 |
-| `ORIGIN_AUTH_HEADER` | `x-saturn-origin-auth` | 攜帶來源密鑰的標頭。 |
+| `ORIGIN_AUTH_HEADER` | `x-eisoptric-origin-auth` | 攜帶來源密鑰的標頭。 |
 | `ORIGIN_AUTH_SECRET_PREVIOUS` | 未設定 | 同樣接受，讓密鑰可以在不中斷服務的情況下輪替。 |
 | `DOCKER_BUILD` | 未設定 | `1` 會建置 Next.js 的 `standalone` 輸出。Dockerfile 會設定它。 |
 
@@ -112,20 +112,20 @@ API_URL=http://localhost:8000 NEXT_PUBLIC_WS_URL=http://localhost:8000 npm run d
 ```mermaid
 flowchart LR
   B["瀏覽器"] -- "頁面" --> C["主控台<br/><sub>Next.js · Cloud Run</sub>"]
-  B -- "/saturn-api/*" --> C
-  C -- "rewrite" --> A["Saturn API<br/><sub>FastAPI · api.saturn-core.com</sub>"]
+  B -- "/gateway-api/*" --> C
+  C -- "rewrite" --> A["Eisoptric API<br/><sub>FastAPI · api.eisoptric.com</sub>"]
   G["AI Agent<br/><sub>MCP 用戶端</sub>"] -- "MCP over HTTP + OAuth<br/>/mcp" --> A
   A --> U["上游 MCP 伺服器"]
 ```
 
-**單一來源。** 瀏覽器只呼叫主控台自己的來源。`src/lib/api.ts` 把每個 API 請求送到 `/saturn-api/<path>`，再由 Next.js rewrite 轉送到 `API_URL`。因此 cookie 都是第一方 cookie，也不需要設定 CORS。產生政策時的 server-sent events 也走同一個 rewrite。主控台不開啟任何 WebSocket。Agent 從不與主控台通訊，而是直接呼叫 API 的 `/mcp` 端點。
+**單一來源。** 瀏覽器只呼叫主控台自己的來源。`src/lib/api.ts` 把每個 API 請求送到 `/gateway-api/<path>`，再由 Next.js rewrite 轉送到 `API_URL`。因此 cookie 都是第一方 cookie，也不需要設定 CORS。產生政策時的 server-sent events 也走同一個 rewrite。主控台不開啟任何 WebSocket。Agent 從不與主控台通訊，而是直接呼叫 API 的 `/mcp` 端點。
 
 **在用戶端繪製的頁面。** 根 layout 在每個請求時繪製，讓每個回應都有自己的 CSP nonce（見下文）。頁面本身是 client component。`src/app/(console)/` 包含所有需要登入的頁面；它的 layout 以驗證關卡包住頁面：沒有 session 時導向 `/login?next=…`，管理員尚未設定通行金鑰或驗證器時導向 `/mfa`。
 
 **狀態。**
 
 - **伺服器資料**透過 TanStack Query 取得。一個查詢（`["console"]`）載入多數頁面共用的快照（Agent、MCP 伺服器、工具集、核准、活動），每 10 秒以及視窗取得焦點時重新取得。變更操作完成後會讓它失效。
-- **用戶端狀態**是兩個 zustand store：`auth-store`（登入的使用者與組織，以 `saturn-auth` 保存在 `localStorage`；不保存 token）與 `locale-store`（`saturn-locale`）。
+- **用戶端狀態**是兩個 zustand store：`auth-store`（登入的使用者與組織，以 `gateway-auth` 保存在 `localStorage`；不保存 token）與 `locale-store`（`gateway-locale`）。
 
 **語言。** [`src/lib/i18n/messages/`](src/lib/i18n/messages) 裡每種語言一個檔案（`en.ts`、`zh.ts`）。`zh` 的型別由 `en` 推導，缺少翻譯時型別檢查會失敗。每種語言是獨立的 chunk，只會下載使用中的那一種；頁面會等它載入後才顯示，所以不會出現缺字或 key。`useI18n()` 回傳 `t("section.key", vars)`，找不到時退回 key 本身。預設語言是繁體中文。選擇語言會更新 `<html lang>`（`zh-Hant` 或 `en-US`），登入時也會儲存到帳號（`PATCH /auth/locale`）。
 
@@ -144,7 +144,7 @@ flowchart LR
 
 ## 安全
 
-通報漏洞：寄信到 security@saturn-core.com（[`/.well-known/security.txt`](public/.well-known/security.txt)）。
+通報漏洞：寄信到 security@eisoptric.com（[`/.well-known/security.txt`](public/.well-known/security.txt)）。
 
 ### 內容安全政策（CSP）
 
@@ -154,7 +154,7 @@ flowchart LR
 - `connect-src 'self'` 與 `NEXT_PUBLIC_WS_URL` 指定的 API 來源（開發模式另加 `localhost`）。
 - `object-src 'none'`、`frame-ancestors 'none'`、`frame-src 'none'`、`base-uri 'self'`、`form-action 'self'` 與同一個 API 來源（代理人登入的通行金鑰步驟會送到那裡），正式環境另加 `upgrade-insecure-requests`。
 
-根 layout 呼叫 `connection()`，讓每個頁面都在請求時繪製，Next.js 才能把 nonce 加到自己的腳本上；它也把 nonce 交給在 hydration 前執行的主題腳本。`_next/static` 下的靜態檔案、`/saturn-api` 與 `logo.png` 不經過 proxy。
+根 layout 呼叫 `connection()`，讓每個頁面都在請求時繪製，Next.js 才能把 nonce 加到自己的腳本上；它也把 nonce 交給在 hydration 前執行的主題腳本。`_next/static` 下的靜態檔案、`/gateway-api` 與 `logo.png` 不經過 proxy。
 
 `next.config.ts` 另外加上 `X-Content-Type-Options: nosniff`、`X-Frame-Options: DENY`、`Referrer-Policy: no-referrer`、關閉相機、麥克風、定位、付款、USB 與動作感測器的 `Permissions-Policy`，正式環境另加 `Strict-Transport-Security`。除了 `/connect-passkey` 以外，每個頁面還會送出 `Cross-Origin-Opener-Policy: same-origin-allow-popups`，其他來源的頁面即使開啟主控台，也拿不到它的視窗參照。`/connect-passkey` 不加，是因為 Agent 的登入流程會在 Agent 用戶端開啟的視窗裡經過這一頁。
 
@@ -167,7 +167,7 @@ flowchart LR
 ### Session
 
 - **密碼不會離開瀏覽器。** [`src/lib/password.ts`](src/lib/password.ts) 以電子郵件為 salt 對密碼執行 Argon2id，再以 HKDF 拆成登入驗證值（API 只會收到這個）與留在瀏覽器中的包裝金鑰。
-- **Session 是 API 設定的 HttpOnly cookie**（`saturn_session`）。登入後，主控台只在 cookie 設定完成前把 bearer token 暫存在記憶體中，從不寫入儲存空間。
+- **Session 是 API 設定的 HttpOnly cookie**（`eisoptric_session`）。登入後，主控台只在 cookie 設定完成前把 bearer token 暫存在記憶體中，從不寫入儲存空間。
 - **第二因素。** 輸入密碼後，登入會要求電子郵件驗證碼、通行金鑰（WebAuthn），或是對已設定驗證器的帳號要求驗證器代碼或備用碼。組織管理員必須先設定通行金鑰或驗證器才能進入主控台，而且只靠電子郵件驗證碼無法登入：輸入驗證碼後還要再用通行金鑰或驗證器確認。
 - **再次驗證。** API 要求時，變更電子郵件、關閉電子郵件驗證碼或移除通行金鑰前，需要再次輸入密碼、電子郵件驗證碼或使用通行金鑰。變更密碼時需要輸入目前的密碼。
 - API 回傳 `401` 時，會清除本機 session 並回到 `/login`。
@@ -213,14 +213,14 @@ npx tsc --noEmit   # 嚴格型別檢查
 
 ## 已知限制
 
-以下是 [0.1.0](CHANGELOG.md) 時已知、尚未修正的問題。API 本身的清單在 [backend README](https://github.com/Saturn-Technology-Project/Saturn-MCP-Backend/blob/main/README_ZH.md#已知限制)。
+以下是 [0.1.0](CHANGELOG.md) 時已知、尚未修正的問題。API 本身的清單在 [backend README](https://github.com/eisoptric/MCP-gateway-backend/blob/main/README_ZH.md#已知限制)。
 
 - 重新驗證時密碼打錯，API 會回 `401`，主控台會因此登出。
 - MCP 登入進行中，離開頁面或在自訂表單切換分頁，主控台就會停止輪詢。API 端仍會完成登入，重新整理就看得到結果。
 - 如果提供方回呼帶的 state API 認不出來，主控台就無法對應到這次登入，會一直等到 15 分鐘逾時。
 - 已經匯出組織私鑰的成員，在權限被撤銷之後仍保有那份副本。
 - 沒有瀏覽器測試。passkey 登入與重新驗證、提供方的登入視窗，以及用真實 MCP 提供方登入，都沒有在瀏覽器裡完整跑過。
-- 主控台對外的 uptime 檢查改由後端 repository 建立的 Cloud Monitoring 檢查負責（[Uptime checks from Cloud Monitoring](https://github.com/Saturn-Technology-Project/Saturn-MCP-Backend/blob/main/infra/gcp/README.md#uptime-checks-from-cloud-monitoring)）。Cloudflare 的 Bot Fight Mode 會放行 Google 的探測，目前是推論，尚未實際看到。
+- 主控台對外的 uptime 檢查改由後端 repository 建立的 Cloud Monitoring 檢查負責（[Uptime checks from Cloud Monitoring](https://github.com/eisoptric/MCP-gateway-backend/blob/main/infra/gcp/README.md#uptime-checks-from-cloud-monitoring)）。Cloudflare 的 Bot Fight Mode 會放行 Google 的探測，目前是推論，尚未實際看到。
 
 ## 授權
 

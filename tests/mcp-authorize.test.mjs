@@ -32,7 +32,7 @@ test("each way a sign-in can fail has its own message", () => {
   assert.equal(mcpOauthErrorText(new McpAuthorizeError("incomplete", "incomplete"), t), "marketplace.signInIncomplete");
   assert.equal(mcpOauthErrorText(new McpAuthorizeError("x", "denied"), t), "marketplace.signInFailed.generic");
   assert.equal(mcpOauthErrorText(new McpAuthorizeError("cancelled", "cancelled"), t), "");
-  assert.equal(mcpOauthErrorText(new Error("This MCP does not let Saturn start sign-in"), t), "marketplace.signInUnavailable");
+  assert.equal(mcpOauthErrorText(new Error("This MCP does not let Eisoptric start sign-in"), t), "marketplace.signInUnavailable");
   assert.equal(mcpOauthErrorText("not an error", t), "marketplace.popupBlocked");
 });
 
