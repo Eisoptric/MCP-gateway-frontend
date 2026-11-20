@@ -18,7 +18,6 @@ GitHub authenticates with Workload Identity Federation. Set these repository val
 - `FRONTEND_CLOUD_RUN_SERVICE` (`gateway-frontend`)
 - `MAX_INSTANCES` (`10`)
 - `RUNTIME_SERVICE_ACCOUNT` (optional; unset keeps the service's current identity)
-- `CLOUD_RUN_INGRESS` (optional; `all`, `internal` or `internal-and-cloud-load-balancing`; unset keeps the current ingress)
 - `CONSOLE_PROXY_SECRET_NAME` (optional; the Secret Manager secret shared with the API, so the API sees each browser's address)
 
 ## Secret Manager

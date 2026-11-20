@@ -133,10 +133,6 @@ jobs:
           MAX_INSTANCES: ${{ vars.MAX_INSTANCES || '10' }}
           # The service's own runtime identity. Unset: it keeps the one it has.
           RUNTIME_SERVICE_ACCOUNT: ${{ vars.RUNTIME_SERVICE_ACCOUNT }}
-          # all | internal | internal-and-cloud-load-balancing. Unset: the service keeps its current
-          # ingress. Set internal-and-cloud-load-balancing once the console sits behind the load
-          # balancer, so its *.run.app address no longer bypasses Cloudflare.
-          CLOUD_RUN_INGRESS: ${{ vars.CLOUD_RUN_INGRESS }}
           # Secret Manager secret shared with the API (its CONSOLE_PROXY_SECRET_NAME). With it the
           # console tells the API each browser's address, so login limits are per user, not shared.
           CONSOLE_PROXY_SECRET_NAME: ${{ vars.CONSOLE_PROXY_SECRET_NAME }}
@@ -146,14 +142,8 @@ jobs:
           if [ -n "${RUNTIME_SERVICE_ACCOUNT}" ]; then
             extra+=(--service-account "${RUNTIME_SERVICE_ACCOUNT}")
           fi
-          case "${CLOUD_RUN_INGRESS}" in
-            "") ;;
-            all | internal | internal-and-cloud-load-balancing)
-              extra+=(--ingress "${CLOUD_RUN_INGRESS}") ;;
-            *)
-              echo "::error::CLOUD_RUN_INGRESS must be all, internal or internal-and-cloud-load-balancing."
-              exit 1 ;;
-          esac
+          # Cloudflare's free plan reaches the console on its public address, so it takes all traffic.
+          extra+=(--ingress all)
           secrets="ORIGIN_AUTH_SECRET=ORIGIN_AUTH_SECRET:latest"
           if [ -n "${CONSOLE_PROXY_SECRET_NAME}" ]; then
             secrets="${secrets},CONSOLE_PROXY_SECRET=${CONSOLE_PROXY_SECRET_NAME}:latest"

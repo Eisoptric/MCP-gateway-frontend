@@ -7,6 +7,7 @@ Notable changes to MCP Gateway Console. The format follows [Keep a Changelog](ht
 ### Changed
 
 - **Saturn MCP Console is now MCP Gateway Console, by Eisoptric.** The repository moved to [eisoptric/MCP-gateway-frontend](https://github.com/eisoptric/MCP-gateway-frontend), the console is at `dashboard.eisoptric.com`, and the API is proxied under `/gateway-api` (was `/saturn-api`).
+- The console deploys with ingress `all` behind Cloudflare's free plan; the `CLOUD_RUN_INGRESS` variable is gone.
 - The console's tab, home-screen and README icons are the Eisoptric Speculum mark.
 - **Breaking: earlier sign-ins and member keys do not carry over.** The password and member-key derivations now use `eisoptric-*` labels, so a password set before this version no longer signs in and a member key wrapped before it no longer opens. It needs the matching backend version.
 
