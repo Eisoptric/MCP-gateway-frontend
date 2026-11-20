@@ -32,19 +32,19 @@ test("a step-up that needs a second factor says which one", async () => {
 });
 
 test("the step-up sends the authenticator code with the password, and rejects with the factor", async () => {
-  useAuthStore.setState({ user: { email: "member@saturn.ai" } });
+  useAuthStore.setState({ user: { email: "member@example.com" } });
   const calls = recordFetch([() => json(403, { detail: { message: "Enter the code", second_factor: "totp" } })]);
   await assert.rejects(reauthenticate("correct horse"), (error) => error instanceof ApiError && error.secondFactor === "totp");
   assert.equal(calls[0].body.totp_code, undefined);
   const sent = recordFetch([() => new Response(null, { status: 204 })]);
   await reauthenticate("correct horse", "123456");
-  assert.equal(sent[0].url, "/saturn-api/auth/reauth");
+  assert.equal(sent[0].url, "/gateway-api/auth/reauth");
   assert.equal(sent[0].body.totp_code, "123456");
   assert.match(sent[0].body.password, /^v2\./);
 });
 
 test("an account with emailed codes sends the code with the password at step-up", async () => {
-  useAuthStore.setState({ user: { email: "member@saturn.ai" } });
+  useAuthStore.setState({ user: { email: "member@example.com" } });
   const calls = recordFetch([() => json(403, { detail: { message: "Enter the code we emailed you", second_factor: "email" } })]);
   await assert.rejects(reauthenticate("correct horse"), (error) => error instanceof ApiError && error.secondFactor === "email");
   assert.equal(calls[0].body.code, undefined);
@@ -60,7 +60,7 @@ test("a hinted sign-in failure is retried once with both legacy proofs", async (
     () => json(401, { detail: { message: "Invalid email or password", migration: "v1" } }),
     () => json(401, { detail: "Invalid email or password" }),
   ]);
-  await assert.rejects(login("member@saturn.ai", "correct horse"), (error) => error instanceof ApiError && error.status === 401);
+  await assert.rejects(login("member@example.com", "correct horse"), (error) => error instanceof ApiError && error.status === 401);
   assert.equal(calls.length, 2);
   assert.equal(calls[0].body.legacy_v1, undefined);
   assert.equal(calls[0].body.legacy_password, undefined);
@@ -70,6 +70,6 @@ test("a hinted sign-in failure is retried once with both legacy proofs", async (
 
 test("a failure without the hint is not retried, so no legacy proof leaves the browser", async () => {
   const calls = recordFetch([() => json(401, { detail: "Invalid email or password" })]);
-  await assert.rejects(login("member@saturn.ai", "correct horse"));
+  await assert.rejects(login("member@example.com", "correct horse"));
   assert.equal(calls.length, 1);
 });

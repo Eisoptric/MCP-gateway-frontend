@@ -15,7 +15,7 @@ export default function OverviewPage() {
   const user = useAuthStore((state) => state.user);
   const name = user?.name || "there";
   const { data, isPending, isError } = useConsole();
-  const agents = (data?.agents ?? []).filter((agent) => agent.origin === "saturn_mcp");
+  const agents = (data?.agents ?? []).filter((agent) => agent.origin === "gateway_mcp");
   const servers = data?.mcpServers ?? [];
   const events = data?.events ?? [];
   const pending = data?.approvals.filter((item) => item.status === "pending").length ?? 0;

@@ -65,7 +65,7 @@ export async function downloadWebhookSecret(id: string) {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = `saturn-webhook-${id}.txt`;
+  link.download = `eisoptric-webhook-${id}.txt`;
   document.body.appendChild(link);
   link.click();
   link.remove();

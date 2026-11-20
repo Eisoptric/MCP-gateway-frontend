@@ -1,6 +1,6 @@
 import { useAuthStore } from "@/lib/auth";
 
-export const API_BASE = "/saturn-api";
+export const API_BASE = "/gateway-api";
 
 /** The second factor a step-up asked for: an authenticator code, an emailed code, or the passkey itself. */
 export type SecondFactor = "totp" | "email" | "passkey";

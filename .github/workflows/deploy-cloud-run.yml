@@ -18,12 +18,12 @@ env:
   GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
   GCP_REGION: ${{ vars.GCP_REGION }}
   GAR_LOCATION: ${{ vars.GAR_LOCATION }}
-  GAR_REPOSITORY: ${{ vars.GAR_REPOSITORY || 'saturn' }}
-  CLOUD_RUN_SERVICE: ${{ vars.FRONTEND_CLOUD_RUN_SERVICE || 'saturn-frontend' }}
-  IMAGE_NAME: saturn-frontend
+  GAR_REPOSITORY: ${{ vars.GAR_REPOSITORY || 'gateway' }}
+  CLOUD_RUN_SERVICE: ${{ vars.FRONTEND_CLOUD_RUN_SERVICE || 'gateway-frontend' }}
+  IMAGE_NAME: gateway-frontend
   # Compiled into the image as build arguments (see "Build and push image"). The running
   # service does not read it.
-  API_URL: https://api.saturn-core.com
+  API_URL: https://api.eisoptric.com
   GITLEAKS_VERSION: 8.30.1
   # sha256 of gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz, from that release's checksums.txt.
   GITLEAKS_SHA256: 551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb
@@ -133,10 +133,6 @@ jobs:
           MAX_INSTANCES: ${{ vars.MAX_INSTANCES || '10' }}
           # The service's own runtime identity. Unset: it keeps the one it has.
           RUNTIME_SERVICE_ACCOUNT: ${{ vars.RUNTIME_SERVICE_ACCOUNT }}
-          # all | internal | internal-and-cloud-load-balancing. Unset: the service keeps its current
-          # ingress. Set internal-and-cloud-load-balancing once the console sits behind the load
-          # balancer, so its *.run.app address no longer bypasses Cloudflare.
-          CLOUD_RUN_INGRESS: ${{ vars.CLOUD_RUN_INGRESS }}
           # Secret Manager secret shared with the API (its CONSOLE_PROXY_SECRET_NAME). With it the
           # console tells the API each browser's address, so login limits are per user, not shared.
           CONSOLE_PROXY_SECRET_NAME: ${{ vars.CONSOLE_PROXY_SECRET_NAME }}
@@ -146,14 +142,8 @@ jobs:
           if [ -n "${RUNTIME_SERVICE_ACCOUNT}" ]; then
             extra+=(--service-account "${RUNTIME_SERVICE_ACCOUNT}")
           fi
-          case "${CLOUD_RUN_INGRESS}" in
-            "") ;;
-            all | internal | internal-and-cloud-load-balancing)
-              extra+=(--ingress "${CLOUD_RUN_INGRESS}") ;;
-            *)
-              echo "::error::CLOUD_RUN_INGRESS must be all, internal or internal-and-cloud-load-balancing."
-              exit 1 ;;
-          esac
+          # Cloudflare's free plan reaches the console on its public address, so it takes all traffic.
+          extra+=(--ingress all)
           secrets="ORIGIN_AUTH_SECRET=ORIGIN_AUTH_SECRET:latest"
           if [ -n "${CONSOLE_PROXY_SECRET_NAME}" ]; then
             secrets="${secrets},CONSOLE_PROXY_SECRET=${CONSOLE_PROXY_SECRET_NAME}:latest"

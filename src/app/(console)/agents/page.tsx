@@ -37,7 +37,7 @@ export default function AgentsPage() {
           plan: org.plan,
         })
       : "";
-  const agents = (data?.agents ?? []).filter((agent) => agent.origin === "saturn_mcp");
+  const agents = (data?.agents ?? []).filter((agent) => agent.origin === "gateway_mcp");
   const personal = org?.kind === "personal" || (org?.kind !== "organization" && org?.plan !== "enterprise");
   const selected = agents.find((agent) => agent.id === selectedId) ?? null;
   const toolSets = data?.toolSets ?? [];
@@ -192,13 +192,13 @@ function ConnectPanel({
   const { t } = useI18n();
   const origin = useHydrated() ? apiOrigin() : "";
   const endpoint = origin ? `${origin}/mcp` : "";
-  const profileHeader = identity ? `X-Saturn-Profile: ${identity}` : "";
+  const profileHeader = identity ? `X-Eisoptric-Profile: ${identity}` : "";
   const config = endpoint
     ? JSON.stringify(
         {
           type: "http",
           url: endpoint,
-          headers: { "X-Saturn-Profile": identity },
+          headers: { "X-Eisoptric-Profile": identity },
         },
         null,
         2

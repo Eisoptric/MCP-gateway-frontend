@@ -1,9 +1,9 @@
 const encoder = new TextEncoder();
-const LOGIN_LABEL = "saturn-login-v1\n";
-const WRAP_LABEL = "saturn-member-wrap-v1\n";
-const SALT_LABEL = "saturn-argon2-salt-v1\n";
-const LOGIN_INFO = encoder.encode("saturn-login-v2");
-const WRAP_INFO = encoder.encode("saturn-member-wrap-v2");
+const LOGIN_LABEL = "eisoptric-login-v1\n";
+const WRAP_LABEL = "eisoptric-member-wrap-v1\n";
+const SALT_LABEL = "eisoptric-argon2-salt-v1\n";
+const LOGIN_INFO = encoder.encode("eisoptric-login-v2");
+const WRAP_INFO = encoder.encode("eisoptric-member-wrap-v2");
 const HKDF_SALT = new Uint8Array(32);
 
 function bytesToHex(bytes: Uint8Array) {

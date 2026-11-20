@@ -8,13 +8,13 @@ const crypto = await import("../src/lib/payload-crypto.ts");
 const { useAuthStore } = await import("../src/stores/auth-store.ts");
 const { MemberKeyPasswordError, clearMemberKey, generateMlKem, bytesToHex, memberKey, passwordBackup, reopenMemberKey, decryptHeldEnvelope } = crypto;
 
-const USER = { id: "user_1", email: "member@saturn.ai", name: "Member", status: "active" };
+const USER = { id: "user_1", email: "member@example.com", name: "Member", status: "active" };
 
 function stubFetch(routes) {
   const calls = [];
   const original = globalThis.fetch;
   globalThis.fetch = async (url, init = {}) => {
-    const key = `${init.method ?? "GET"} ${String(url).replace("/saturn-api", "")}`;
+    const key = `${init.method ?? "GET"} ${String(url).replace("/gateway-api", "")}`;
     calls.push(key);
     if (!(key in routes)) return new Response(JSON.stringify({ detail: "Not found" }), { status: 404 });
     return new Response(JSON.stringify(routes[key]), { status: 200, headers: { "content-type": "application/json" } });

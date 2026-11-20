@@ -1,7 +1,7 @@
 function toWsOrigin(url: string): string {
   let origin = url.trim().replace(/\/$/, "");
-  if (origin.endsWith("/saturn-api")) {
-    origin = origin.slice(0, -"/saturn-api".length);
+  if (origin.endsWith("/gateway-api")) {
+    origin = origin.slice(0, -"/gateway-api".length);
   }
   if (origin.startsWith("https://")) return `wss://${origin.slice("https://".length)}`;
   if (origin.startsWith("http://")) return `ws://${origin.slice("http://".length)}`;
@@ -19,7 +19,7 @@ function configuredWsOrigin(): string {
     process.env.NEXT_PUBLIC_WS_URL?.trim() ||
     process.env.NEXT_PUBLIC_API_URL?.trim();
   if (explicit) return toWsOrigin(explicit);
-  return toWsOrigin("https://api.saturn-core.com");
+  return toWsOrigin("https://api.eisoptric.com");
 }
 
 /**

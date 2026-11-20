@@ -256,7 +256,7 @@ function actorKindFor(event: string, actorType: string): ActorKind {
   }
   if (actorType === "user") return "human";
   if (actorType === "agent") return "agent";
-  return "saturn";
+  return "gateway";
 }
 
 function mapActivity(event: ApiActivity, agents: Pick<ApiAgent, "id" | "name">[]): ActivityEvent {
@@ -268,7 +268,7 @@ function mapActivity(event: ApiActivity, agents: Pick<ApiAgent, "id" | "name">[]
   const payload = event.payload ?? {};
   const agent = agents.find((item) => item.id === event.actor_id);
 
-  let actor = "Saturn";
+  let actor = "Eisoptric";
   let actorId: string | undefined;
   if (kind === "tool") {
     actor = event.tool ?? "Tool";

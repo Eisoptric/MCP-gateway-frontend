@@ -6,18 +6,18 @@ import { requestKeyUnlock } from "@/lib/key-unlock";
 import { legacyWrapMaterial, memberWrapMaterial } from "@/lib/password";
 
 const encoder = new TextEncoder();
-const WRAP_INFO = encoder.encode("saturn-payload-mlkem1024-v1");
-const RECOVERY_INFO = encoder.encode("saturn-recovery-v1");
+const WRAP_INFO = encoder.encode("eisoptric-payload-mlkem1024-v1");
+const RECOVERY_INFO = encoder.encode("eisoptric-recovery-v1");
 const WRAP_VERSION = 2;
 const KEM_CIPHERTEXT_BYTES = ml_kem1024.lengths.cipherText ?? 1568;
 const SHA384_ZERO_SALT = new Uint8Array(48);
 const SHA256_ZERO_SALT = new Uint8Array(32);
-const DEK_PROOF_INFO = encoder.encode("saturn-payload-dek-proof-v1");
+const DEK_PROOF_INFO = encoder.encode("eisoptric-payload-dek-proof-v1");
 /** Member backups wrapped in the browser under the Argon2id/HKDF wrap key. The server never sees that key. */
 export const MEMBER_BACKUP_SCHEME = "argon2id-hkdf-aesgcm-v2";
 export const RECOVERY_ITERATIONS = 600_000;
 
-const SESSION_KEY = "saturn-member-key";
+const SESSION_KEY = "eisoptric-member-key";
 export const PASSWORD_ITERATIONS = 600_000;
 
 type HeldMemberKey = { privateKey: Uint8Array; publicKey: Uint8Array; memberKeyId: string };
@@ -301,18 +301,18 @@ export async function openPasswordBackup(password: string, userId: string, backu
 }
 
 export function clearIgnoredAssists() {
-  if (typeof sessionStorage !== "undefined") sessionStorage.removeItem("saturn-assist-ignored");
+  if (typeof sessionStorage !== "undefined") sessionStorage.removeItem("gateway-assist-ignored");
 }
 
 export function ignoredAssists() {
   if (typeof sessionStorage === "undefined") return new Set<string>();
-  return new Set((sessionStorage.getItem("saturn-assist-ignored") ?? "").split(",").filter(Boolean));
+  return new Set((sessionStorage.getItem("gateway-assist-ignored") ?? "").split(",").filter(Boolean));
 }
 
 export function ignoreAssist(memberKeyId: string) {
   const next = ignoredAssists();
   next.add(memberKeyId);
-  sessionStorage.setItem("saturn-assist-ignored", [...next].join(","));
+  sessionStorage.setItem("gateway-assist-ignored", [...next].join(","));
 }
 
 export async function unlockOrganizationKey(recoveryHex: string) {
@@ -413,7 +413,7 @@ export async function unlockMemberKey(password: string) {
     const backup = await fetchMemberBackup();
     const privateKey = await openPasswordBackup(password, userId, backup, email);
     holdMemberKey(privateKey, hexToBytes(backup.public_key), backup.member_key_id);
-    if (typeof sessionStorage !== "undefined") sessionStorage.removeItem("saturn-member-rewrap");
+    if (typeof sessionStorage !== "undefined") sessionStorage.removeItem("eisoptric-member-rewrap");
   } catch (error) {
     if (error instanceof ApiError && error.status !== 404) throw error;
     const missing = error instanceof ApiError && error.status === 404;
@@ -425,7 +425,7 @@ export async function unlockMemberKey(password: string) {
       needs_assist: !missing,
     });
     holdMemberKey(privateKey, publicKey, registered.id);
-    if (!missing && typeof sessionStorage !== "undefined") sessionStorage.setItem("saturn-member-rewrap", "1");
+    if (!missing && typeof sessionStorage !== "undefined") sessionStorage.setItem("eisoptric-member-rewrap", "1");
   }
 }
 

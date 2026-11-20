@@ -79,7 +79,7 @@ export const useAuthStore = create<AuthState>()(
       setHydrated: (hydrated) => set({ hydrated }),
     }),
     {
-      name: "saturn-auth",
+      name: "gateway-auth",
       version: 2,
       migrate: (persisted) => {
         if (persisted && typeof persisted === "object") {

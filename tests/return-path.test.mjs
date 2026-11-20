@@ -10,7 +10,7 @@ test("authentication preserves internal destinations and URL components", () => 
 });
 
 test("authentication rejects external URLs and ambiguous paths", () => {
-  for (const path of [null, "", "approvals", "https://other.example/", "https://saturn.invalid/", "//other.example/", "///other.example/", "/\\other.example/", "\\\\other.example/", "javascript:alert(1)", "data:text/html,test", "\n/approvals", "/\t/other.example/", "/approvals\u0000", "/safe/..//other.example/", "/safe/%2e%2e//other.example/", "/ /other.example/"]) {
+  for (const path of [null, "", "approvals", "https://other.example/", "https://example.invalid/", "//other.example/", "///other.example/", "/\\other.example/", "\\\\other.example/", "javascript:alert(1)", "data:text/html,test", "\n/approvals", "/\t/other.example/", "/approvals\u0000", "/safe/..//other.example/", "/safe/%2e%2e//other.example/", "/ /other.example/"]) {
     assert.equal(safeReturnPath(path), "/overview", JSON.stringify(path));
   }
 });

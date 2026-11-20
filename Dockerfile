@@ -12,7 +12,7 @@ RUN npm ci
 FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-# Both are compiled into the build (the /saturn-api rewrite and the pages), so they are build
+# Both are compiled into the build (the /gateway-api rewrite and the pages), so they are build
 # arguments only. Setting them on the running container has no effect.
 ARG API_URL=http://api:8000
 ARG NEXT_PUBLIC_WS_URL=

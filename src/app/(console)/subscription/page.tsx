@@ -4,7 +4,7 @@ import { NavIcon } from "@/components/layout/nav-icon";
 import { DONATE_URL } from "@/lib/donate";
 import { useI18n } from "@/lib/i18n";
 
-// Saturn has no paid plans. Old links to /subscription land here.
+// Eisoptric has no paid plans. Old links to /subscription land here.
 export default function SubscriptionPage() {
   const { t } = useI18n();
   return (

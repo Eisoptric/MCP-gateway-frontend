@@ -1,15 +1,15 @@
 <div align="center">
 
-<img src="public/logo.png" alt="Saturn" width="112" height="112" />
+<img src="public/logo.png" alt="Eisoptric" width="112" height="112" />
 
-# Saturn MCP Console
+# MCP Gateway Console
 
-**The web console of Saturn MCP, the gateway between AI agents and their tools.**
+**The web console of MCP Gateway, the gateway between AI agents and their tools.**
 
 Connect MCP servers, choose which tools each agent can see, write the policy that decides every call, approve what needs a person, and read the audit record, from one console.
 
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Check](https://github.com/Saturn-Technology-Project/Saturn-MCP-Frontend/actions/workflows/check.yml/badge.svg)](https://github.com/Saturn-Technology-Project/Saturn-MCP-Frontend/actions/workflows/check.yml)
+[![Check](https://github.com/eisoptric/MCP-gateway-frontend/actions/workflows/check.yml/badge.svg)](https://github.com/eisoptric/MCP-gateway-frontend/actions/workflows/check.yml)
 ![Next.js](https://img.shields.io/badge/Next.js-16.3-000000.svg?logo=next.js&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-61DAFB.svg?logo=react&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6.svg?logo=typescript&logoColor=white)
@@ -22,11 +22,11 @@ Connect MCP servers, choose which tools each agent can see, write the policy tha
 
 ## What it is
 
-[Saturn MCP](https://saturn-core.com) sits between your AI agents and your MCP servers. Agents connect to one MCP endpoint and sign in with OAuth; Saturn holds the upstream credentials, shows each agent only the tools it is allowed to use, evaluates a policy on every call, holds sensitive calls for human approval, and records each step.
+[MCP Gateway](https://eisoptric.com) sits between your AI agents and your MCP servers. Agents connect to one MCP endpoint and sign in with OAuth; Eisoptric holds the upstream credentials, shows each agent only the tools it is allowed to use, evaluates a policy on every call, holds sensitive calls for human approval, and records each step.
 
-This repository is the console for it: a Next.js app that runs on Cloud Run at **[dashboard.saturn-core.com](https://dashboard.saturn-core.com)**. It holds no data of its own. Every request goes to the Saturn API, a FastAPI service in the separate [Saturn-MCP-Backend](https://github.com/Saturn-Technology-Project/Saturn-MCP-Backend) repository, served at `https://api.saturn-core.com`.
+This repository is the console for it: a Next.js app that runs on Cloud Run at **[dashboard.eisoptric.com](https://dashboard.eisoptric.com)**. It holds no data of its own. Every request goes to the Eisoptric API, a FastAPI service in the separate [MCP-gateway-backend](https://github.com/eisoptric/MCP-gateway-backend) repository, served at `https://api.eisoptric.com`.
 
-- **Free.** Every feature is on every account. If Saturn helps you, you can [sponsor the project on GitHub](https://github.com/sponsors/Saturn-Technology-Project).
+- **Free.** Every feature is on every account. If Eisoptric helps you, you can [sponsor the project on GitHub](https://github.com/sponsors/eisoptric).
 - **Bilingual.** Every screen is in English and Traditional Chinese (Taiwan).
 - **Usable by agents.** Every control has an accessible name, so computer-use agents can drive the console as well as people can ([details](#accessibility-and-computer-use)).
 
@@ -39,9 +39,9 @@ The sidebar, in order:
 | ✅ **Approve** | `/approvals` | Tool calls a policy held for approval: agent, tool, arguments, triggered rule, risk, group progress and deadline. Approve or reject. Approval does not mean the tool has run; the execution state is shown separately. |
 | 🔁 **Resubmit** | `/approvals/resubmit` | Approved calls waiting for the agent to send them again, with the time left before they expire. |
 | 🏠 **Home** | `/overview` | Counts of agents, connected MCP servers, tool calls and pending approvals, tool usage, and recent activity. Refreshes every 10 seconds. |
-| 🧩 **Marketplace** | `/tools` | A catalog of remote MCP servers from their publishers, by category. Connect one with the provider's OAuth sign-in in a pop-up window, or by pasting an access token; add any other server by URL. The token stays on Saturn. |
+| 🧩 **Marketplace** | `/tools` | A catalog of remote MCP servers from their publishers, by category. Connect one with the provider's OAuth sign-in in a pop-up window, or by pasting an access token; add any other server by URL. The token stays on Eisoptric. |
 | 🔗 **Connections** | `/tools/connections` | The MCP servers this organization has connected: status, tools, usage, recent calls. Refresh the tool list, reconnect, replace the token, or remove a server. |
-| 🤖 **Agents** | `/agents` | Agents that have connected to Saturn MCP, who registered them, and their tools. **Connect Agents** shows what to paste into an MCP client: the endpoint (`<API origin>/mcp`), HTTP transport, OAuth sign-in, the `saturn.mcp` scope and the `X-Saturn-Profile` header, plus a ready client config. |
+| 🤖 **Agents** | `/agents` | Agents that have connected to MCP Gateway, who registered them, and their tools. **Connect Agents** shows what to paste into an MCP client: the endpoint (`<API origin>/mcp`), HTTP transport, OAuth sign-in, the `eisoptric.mcp` scope and the `X-Eisoptric-Profile` header, plus a ready client config. |
 | 🎛️ **Tools & Mapping** | `/tools/mapping` | Tool sets: which tools an agent on the set can discover, and whether each one runs or needs approval by default. Assign sets to agents. |
 | 🛡️ **Policy** | `/policies` | Versioned runtime policies with IF / THEN rules on tool arguments (allow, require approval with per-group quorum, deny). Edit on a canvas, a form, or as JSON; generate a draft from a tool set with a template (Read Only, Balanced, Strict) while the model's progress streams in; ask the model to revise it; test a call against it; validate, review what it will allow, then activate. A deny in a policy overrides a set that allows the tool. |
 | 📜 **Audit Logs** | `/activity` | The event chain of each call: requested, evaluated, approval, executed. Filter and export to JSON. Authorized members decrypt the stored request and response in the browser. |
@@ -51,7 +51,7 @@ The account menu at the bottom of the sidebar:
 
 | Page | Route | What it does |
 |---|---|---|
-| 👤 **Profile** | `/profile` | Name, photo, email change (a code to each address), password, light or dark theme, sign-in verification (email codes and passkeys), and which events Saturn emails you about. |
+| 👤 **Profile** | `/profile` | Name, photo, email change (a code to each address), password, light or dark theme, sign-in verification (email codes and passkeys), and which events Eisoptric emails you about. |
 | 👥 **Team** | `/team` | Organization accounts only. Members, titles, and `none` / `read` / `write` permissions for agents, policies, approvals and team; emailed invites; approver groups. |
 | 🏢 **Organization** | `/settings` | Organization name and logo, payload encryption (create the organization key, save its recovery key, unlock with it), and the member count. |
 | 🌐 **Language** | | English or 繁體中文. Saved to your account. |
@@ -66,13 +66,13 @@ Requires Node.js 22 (the version CI and the Docker image use) or Docker.
 ### Against the hosted API
 
 ```bash
-git clone https://github.com/Saturn-Technology-Project/Saturn-MCP-Frontend.git
-cd Saturn-MCP-Frontend
+git clone https://github.com/eisoptric/MCP-gateway-frontend.git
+cd MCP-gateway-frontend
 npm ci
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). With no configuration the console talks to `https://api.saturn-core.com`, so you sign in with a Saturn account, or create one at `/register`.
+Open [http://localhost:3000](http://localhost:3000). With no configuration the console talks to `https://api.eisoptric.com`, so you sign in with an Eisoptric account, or create one at `/register`.
 
 The same thing in a production build, with Docker Compose:
 
@@ -84,7 +84,7 @@ docker compose up --build
 
 ### Against a local API
 
-Start the API from the [Saturn-MCP-Backend](https://github.com/Saturn-Technology-Project/Saturn-MCP-Backend) repository first (its `docker compose up --build` serves it on `http://localhost:8000`, with the admin account from `SEED_USER_EMAIL` and `SEED_USER_PASSWORD` in its `.env`). Then:
+Start the API from the [MCP-gateway-backend](https://github.com/eisoptric/MCP-gateway-backend) repository first (its `docker compose up --build` serves it on `http://localhost:8000`, with the admin account from `SEED_USER_EMAIL` and `SEED_USER_PASSWORD` in its `.env`). Then:
 
 ```bash
 API_URL=http://localhost:8000 NEXT_PUBLIC_WS_URL=http://localhost:8000 npm run dev
@@ -96,10 +96,10 @@ Or put both variables in `.env.local` (see [`.env.example`](.env.example)). Rest
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `API_URL` | `https://api.saturn-core.com` | Where `/saturn-api/*` is forwarded. Read when `next.config.ts` loads, so a Docker image has it built in (`--build-arg API_URL=…`). |
-| `NEXT_PUBLIC_WS_URL` | `https://api.saturn-core.com` | The API's public origin as the browser should see it. Shown as the MCP endpoint on the Agents page, used as the target of the agent passkey hand-off, and allowed in the Content-Security-Policy. Inlined at build time. `NEXT_PUBLIC_API_URL` is read if it is unset. |
+| `API_URL` | `https://api.eisoptric.com` | Where `/gateway-api/*` is forwarded. Read when `next.config.ts` loads, so a Docker image has it built in (`--build-arg API_URL=…`). |
+| `NEXT_PUBLIC_WS_URL` | `https://api.eisoptric.com` | The API's public origin as the browser should see it. Shown as the MCP endpoint on the Agents page, used as the target of the agent passkey hand-off, and allowed in the Content-Security-Policy. Inlined at build time. `NEXT_PUBLIC_API_URL` is read if it is unset. |
 | `ORIGIN_AUTH_SECRET` | unset | When set, every request except `/health` must carry this value in the origin header, or it gets `403`. On Cloud Run (`K_SERVICE` set) the console refuses every request until it is set. |
-| `ORIGIN_AUTH_HEADER` | `x-saturn-origin-auth` | The header that carries the origin secret. |
+| `ORIGIN_AUTH_HEADER` | `x-eisoptric-origin-auth` | The header that carries the origin secret. |
 | `ORIGIN_AUTH_SECRET_PREVIOUS` | unset | Also accepted, so the secret can be rotated without downtime. |
 | `DOCKER_BUILD` | unset | `1` builds Next.js's `standalone` output. The Dockerfile sets it. |
 
@@ -112,20 +112,20 @@ Or put both variables in `.env.local` (see [`.env.example`](.env.example)). Rest
 ```mermaid
 flowchart LR
   B["Browser"] -- "pages" --> C["Console<br/><sub>Next.js · Cloud Run</sub>"]
-  B -- "/saturn-api/*" --> C
-  C -- "rewrite" --> A["Saturn API<br/><sub>FastAPI · api.saturn-core.com</sub>"]
+  B -- "/gateway-api/*" --> C
+  C -- "rewrite" --> A["Eisoptric API<br/><sub>FastAPI · api.eisoptric.com</sub>"]
   G["AI agents<br/><sub>MCP clients</sub>"] -- "MCP over HTTP + OAuth<br/>/mcp" --> A
   A --> U["Upstream MCP servers"]
 ```
 
-**One origin.** The browser calls only the console's own origin. `src/lib/api.ts` sends every API request to `/saturn-api/<path>`, and a Next.js rewrite forwards it to `API_URL`. Cookies are therefore first-party and there is no CORS to configure. Policy generation streams server-sent events through the same rewrite. The console opens no WebSocket. Agents never talk to the console; they call the API's `/mcp` endpoint directly.
+**One origin.** The browser calls only the console's own origin. `src/lib/api.ts` sends every API request to `/gateway-api/<path>`, and a Next.js rewrite forwards it to `API_URL`. Cookies are therefore first-party and there is no CORS to configure. Policy generation streams server-sent events through the same rewrite. The console opens no WebSocket. Agents never talk to the console; they call the API's `/mcp` endpoint directly.
 
 **Client-rendered pages.** The root layout renders on every request so that each response gets its own CSP nonce (see below). The pages themselves are client components. `src/app/(console)/` holds everything behind sign-in; its layout wraps the pages in an auth gate that sends you to `/login?next=…` without a session, or to `/mfa` when an admin has neither a passkey nor an authenticator yet.
 
 **State.**
 
 - **Server data** goes through TanStack Query. One query (`["console"]`) loads the snapshot most pages share (agents, MCP servers, tool sets, approvals, activity) and refetches every 10 seconds and on window focus. Mutations invalidate it.
-- **Client state** is two zustand stores: `auth-store` (the signed-in user and organization, persisted to `localStorage` as `saturn-auth`; the token is not persisted) and `locale-store` (`saturn-locale`).
+- **Client state** is two zustand stores: `auth-store` (the signed-in user and organization, persisted to `localStorage` as `gateway-auth`; the token is not persisted) and `locale-store` (`gateway-locale`).
 
 **Languages.** [`src/lib/i18n/messages/`](src/lib/i18n/messages) holds one file per language (`en.ts`, `zh.ts`). `zh` is typed from `en`, so a missing translation fails the type check. Each language is its own chunk and only the one in use is downloaded; pages render once it has arrived, so no text is drawn from a missing language. `useI18n()` returns `t("section.key", vars)`, which falls back to the key itself. The default is Traditional Chinese. Choosing a language updates `<html lang>` (`zh-Hant` or `en-US`) and, when signed in, saves it to the account (`PATCH /auth/locale`).
 
@@ -144,7 +144,7 @@ This version of Next.js renamed Middleware to Proxy, so request handling lives i
 
 ## Security
 
-How to report a vulnerability: email security@saturn-core.com ([`/.well-known/security.txt`](public/.well-known/security.txt)).
+How to report a vulnerability: email security@eisoptric.com ([`/.well-known/security.txt`](public/.well-known/security.txt)).
 
 ### Content Security Policy
 
@@ -154,7 +154,7 @@ How to report a vulnerability: email security@saturn-core.com ([`/.well-known/se
 - `connect-src 'self'` and the API origin from `NEXT_PUBLIC_WS_URL` (plus `localhost` in development).
 - `object-src 'none'`, `frame-ancestors 'none'`, `frame-src 'none'`, `base-uri 'self'`, `form-action 'self'` and the same API origin (the passkey step of an agent's sign-in posts there), and `upgrade-insecure-requests` in production.
 
-The root layout calls `connection()` so every page renders per request, which is how Next.js attaches the nonce to its own scripts, and it passes the nonce to the theme script that runs before hydration. Static assets under `_next/static`, `/saturn-api` and `logo.png` skip the proxy.
+The root layout calls `connection()` so every page renders per request, which is how Next.js attaches the nonce to its own scripts, and it passes the nonce to the theme script that runs before hydration. Static assets under `_next/static`, `/gateway-api` and `logo.png` skip the proxy.
 
 `next.config.ts` adds `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: no-referrer`, a `Permissions-Policy` that turns off camera, microphone, geolocation, payment, USB and motion sensors, and, in production, `Strict-Transport-Security`. Every page except `/connect-passkey` also sends `Cross-Origin-Opener-Policy: same-origin-allow-popups`, so a page on another origin that opens the console gets no handle to it. `/connect-passkey` is left out because an agent's sign-in passes through it in a window the agent's client may have opened.
 
@@ -167,7 +167,7 @@ In production the Cloud Run service is reachable only through the front door. Th
 ### Sessions
 
 - **Passwords never leave the browser.** [`src/lib/password.ts`](src/lib/password.ts) runs Argon2id over the password, salted by the email, and splits the result with HKDF into a login verifier, which is all the API receives, and a wrap key that stays in the browser.
-- **The session is an HttpOnly cookie** (`saturn_session`) set by the API. After sign-in the console holds the bearer token in memory only until the cookie is in place, and never writes it to storage.
+- **The session is an HttpOnly cookie** (`eisoptric_session`) set by the API. After sign-in the console holds the bearer token in memory only until the cookie is in place, and never writes it to storage.
 - **Second factor.** After the password, sign-in asks for an email code, a passkey (WebAuthn) or, for accounts that have one, an authenticator code or backup code. Organization admins must set up a passkey or an authenticator before they reach the console, and an email code alone does not sign them in: after it they confirm with that passkey or authenticator.
 - **Step-up.** Changing your email, turning off email codes or removing a passkey asks again for a password, an email code or a passkey when the API requires it. Changing the password asks for the current one.
 - A `401` from the API clears the local session and returns to `/login`.
@@ -213,14 +213,14 @@ Pushing to `main` builds a `linux/amd64` image, pushes it to Artifact Registry a
 
 ## Known limitations
 
-These are known as of [0.1.0](CHANGELOG.md) and not yet fixed. The API's own list is in the [backend README](https://github.com/Saturn-Technology-Project/Saturn-MCP-Backend#known-limitations).
+These are known as of [0.1.0](CHANGELOG.md) and not yet fixed. The API's own list is in the [backend README](https://github.com/eisoptric/MCP-gateway-backend#known-limitations).
 
 - A wrong password at a step-up prompt gets a `401` from the API, and the console signs out.
 - While an MCP sign-in is in progress, leaving the page or switching tabs in the custom form stops the console from polling. The API still completes the sign-in, and a reload shows the result.
 - If the provider's callback carries a state the API does not recognize, the console cannot match it to the sign-in and waits until the 15-minute timeout.
 - A member who exported the organization private key keeps that copy after their access is revoked.
 - There are no browser tests. Passkey sign-in and step-up, the provider's sign-in window, and a sign-in with a real MCP provider have not been run end to end in a browser.
-- The console's outside uptime check is a Cloud Monitoring check created from the backend repository ([Uptime checks from Cloud Monitoring](https://github.com/Saturn-Technology-Project/Saturn-MCP-Backend/blob/main/infra/gcp/README.md#uptime-checks-from-cloud-monitoring)). That Cloudflare's Bot Fight Mode lets Google's probes through is inferred, not yet seen.
+- The console's outside uptime check is a Cloud Monitoring check created from the backend repository ([Uptime checks from Cloud Monitoring](https://github.com/eisoptric/MCP-gateway-backend/blob/main/infra/gcp/README.md#uptime-checks-from-cloud-monitoring)). That Cloudflare's Bot Fight Mode lets Google's probes through is inferred, not yet seen.
 
 ## License
 

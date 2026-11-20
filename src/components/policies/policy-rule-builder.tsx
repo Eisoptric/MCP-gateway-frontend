@@ -57,7 +57,7 @@ export function PolicyRuleBuilder({
   return (
     <div className="border border-border px-5 py-5">
       <div className="flex items-center justify-between">
-        <div className="saturn-label">{t("policies.if")}</div>
+        <div className="gateway-label">{t("policies.if")}</div>
         {canRemove ? (
           <button
             type="button"
@@ -121,7 +121,7 @@ export function PolicyRuleBuilder({
           {t("policies.addCondition")}
         </Button>
       </div>
-      <div className="mt-6 saturn-label">{t("policies.then")}</div>
+      <div className="mt-6 gateway-label">{t("policies.then")}</div>
       <select aria-label={t("policies.kind.decision")}
         value={rule.decision}
         onChange={(event) =>

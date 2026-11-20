@@ -1,5 +1,5 @@
 const DEFAULT_RETURN_PATH = "/overview";
-const RETURN_ORIGIN = "https://saturn.invalid";
+const RETURN_ORIGIN = "https://example.invalid";
 
 /** Only root-relative, same-origin destinations can be used after authentication. */
 export function safeReturnPath(value: string | null): string {
