@@ -361,6 +361,22 @@ export const marketCatalog: MarketEntry[] = [
     },
   },
   {
+    id: "resend",
+    category: "communication",
+    endpoint: "https://mcp.resend.com/mcp",
+    publisher: "Resend",
+    docs: "https://resend.com/docs/knowledge-base/mcp-server",
+    auth: "token",
+    blurb: {
+      en: "Send email and manage contacts, broadcasts, and domains in Resend.",
+      zh: "透過 Resend 寄信，並管理聯絡人、群發郵件與網域。",
+    },
+    points: {
+      en: ["Send, schedule, and read email from your verified domains", "Manage templates, contacts, segments, and broadcasts", "Can send to real recipients and delete domains or API keys, so add a policy or approval"],
+      zh: ["用已驗證的網域寄送、排程與讀取郵件", "管理範本、聯絡人、分眾與群發郵件", "可以寄信給真實收件人，也能刪除網域或 API 金鑰，請設定政策或審批"],
+    },
+  },
+  {
     id: "indeed",
     category: "productivity",
     endpoint: "https://mcp.indeed.com/claude/mcp",
@@ -914,6 +930,7 @@ export function marketName(id: string) {
     huggingface: "Hugging Face",
     neon: "Neon",
     supabase: "Supabase",
+    resend: "Resend",
   };
   return names[id] ?? id;
 }
