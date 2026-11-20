@@ -13,6 +13,7 @@ Notable changes to MCP Gateway Console. The format follows [Keep a Changelog](ht
 
 ### Added
 
+- A Resend card in the MCP market (Communication), for `https://mcp.resend.com/mcp`. It signs in with Resend's OAuth, and its tools can send email and delete domains or API keys, so the card says to add a policy.
 - Settings has an **Approved MCP hosts** section. Admins approve the hosts where custom MCP servers may run, after confirming it is them. When a connection is refused because its host is not approved, the marketplace links there. This needs the matching backend change.
 
 - Cloudflare (`mcp.cloudflare.com`), Cloud Run (`run.googleapis.com`), Memorystore for Redis (`redis.googleapis.com`), Cloud SQL for PostgreSQL (`sqladmin.googleapis.com`), alphaXiv for arXiv papers (`api.alphaxiv.org`) and Weights & Biases (`mcp.withwandb.com`) in the marketplace. They need the backend change that approves these hosts.
