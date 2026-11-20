@@ -131,7 +131,7 @@ function LoginForm() {
       router.replace(next);
     } catch (err) {
       if (err instanceof ApiError) setError(err.message);
-      else setError(t("profile.passkeyUnsupported"));
+      else setError(t("login.passkeyFailed"));
     } finally {
       setPending(false);
     }

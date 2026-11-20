@@ -943,6 +943,7 @@ export const en = {
     noticeAuditBody: "A policy denies a call, or an agent tries a tool it cannot use.",
     reauthBody: "Enter your password, an email code, or a passkey to continue.",
     reauthSend: "Email me a code",
+    reauthConfirm: "Continue",
     reauthCode: "Email code",
     reauthTotpBody: "This account uses an authenticator app. Enter its 6-digit code, or a backup code, to continue.",
     reauthTotpCode: "Authenticator or backup code",
