@@ -53,9 +53,7 @@ export interface Agent {
   running: boolean;
   connected: boolean;
   enrolled?: boolean;
-  runtimeId?: string | null;
   lastHeartbeatAt?: string | null;
-  model: string;
   toolIds: string[];
   toolSetId: string | null;
   profileId: string | null;
@@ -64,7 +62,6 @@ export interface Agent {
   registeredUserName: string | null;
   registeredUserEmail: string | null;
   policyIds: string[];
-  settings: AgentSettings;
 }
 
 export interface ToolFunction {

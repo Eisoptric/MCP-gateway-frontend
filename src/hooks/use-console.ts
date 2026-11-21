@@ -7,7 +7,6 @@ import {
 } from "@tanstack/react-query";
 import {
   approveApproval,
-  createAgent,
   createPolicy,
   deleteAgent,
   deleteMcpServer,
@@ -39,17 +38,6 @@ export function useConsole() {
     refetchInterval: consoleRefetchInterval(pathname),
     refetchOnMount: "always",
     refetchOnWindowFocus: true,
-  });
-}
-
-export function useCreateAgent() {
-  const client = useQueryClient();
-  return useMutation({
-    mutationFn: (body: { name: string; description?: string; model?: string }) =>
-      createAgent(body),
-    onSuccess: async () => {
-      await client.invalidateQueries({ queryKey: consoleQueryKey });
-    },
   });
 }
 

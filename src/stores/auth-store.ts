@@ -27,17 +27,8 @@ export interface AuthUser {
 export interface AuthOrg {
   id: string;
   name: string;
-  plan?: string;
   kind?: "personal" | "organization" | string;
   photo?: string | null;
-  entitlements?: {
-    gateway: boolean;
-    tool_set_limit: number | null;
-    policies: boolean;
-    webhooks?: boolean;
-    audit: string;
-    audit_days: number | null;
-  };
 }
 
 export interface AuthSession {

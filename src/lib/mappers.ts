@@ -10,7 +10,6 @@ import type {
   ApiToolSet,
 } from "@/lib/api";
 import { compareNewestFirst } from "@/lib/activity-pages";
-import { normalizeSettings } from "@/lib/agent-config";
 import {
   approvalRisk,
   formatMatchedRule,
@@ -349,9 +348,6 @@ function mapServices(health: ApiHealth | undefined): SystemService[] {
 }
 
 function mapAgent(agent: ApiAgent, tools: ApiTool[], policies: ApiPolicy[]): Agent {
-  const assigned = Array.isArray(agent.settings?.tools)
-    ? new Set(agent.settings.tools)
-    : null;
   return {
     id: agent.id,
     name: agent.name,
@@ -360,12 +356,8 @@ function mapAgent(agent: ApiAgent, tools: ApiTool[], policies: ApiPolicy[]): Age
     running: false,
     connected: Boolean(agent.connected),
     enrolled: Boolean(agent.enrolled),
-    runtimeId: agent.runtime_id ?? null,
     lastHeartbeatAt: agent.last_seen_at ?? null,
-    model: agent.model,
-    toolIds: tools
-      .filter((tool) => (assigned ? assigned.has(tool.name) : true))
-      .map((tool) => tool.id),
+    toolIds: tools.map((tool) => tool.id),
     toolSetId: agent.tool_set_id ?? null,
     profileId: agent.profile_id ?? null,
     origin: agent.origin ?? null,
@@ -378,7 +370,6 @@ function mapAgent(agent: ApiAgent, tools: ApiTool[], policies: ApiPolicy[]): Age
         return ids.length === 0 || ids.includes(agent.id);
       })
       .map((policy) => policy.id),
-    settings: normalizeSettings(agent.settings, agent.model, agent),
   };
 }
 

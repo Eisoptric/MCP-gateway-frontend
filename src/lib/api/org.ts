@@ -1,6 +1,6 @@
 import { useAuthStore } from "@/lib/auth";
 import { del, get, patch, post, request } from "./transport";
-import type { AccessPermissions, Entitlements } from "./types";
+import type { AccessPermissions } from "./types";
 
 export interface OrgMember {
   id: string;
@@ -34,10 +34,8 @@ export async function fetchOrg() {
     organization: {
       id: string;
       name: string;
-      plan?: string;
       kind?: string;
       photo?: string | null;
-      entitlements?: Entitlements;
     };
     catalog: { resources: { id: string; actions: string[] }[]; roles: { id: string; permissions: AccessPermissions }[] };
     me: OrgMember | null;
@@ -51,43 +49,6 @@ export async function updateOrgPhoto(photo: string | null) {
     useAuthStore.setState({ org: { ...state.org, photo: organization.photo ?? null } });
   }
   return organization;
-}
-
-export interface SubscriptionLine {
-  kind: "plan" | string;
-  id: string;
-  name: string;
-  amount: string;
-}
-
-export interface SubscriptionInvoice {
-  id: string;
-  number: string;
-  period: string;
-  issued_at: string;
-  paid_at?: string | null;
-  amount: string;
-  currency: string;
-  status: "open" | "paid" | string;
-  lines: SubscriptionLine[];
-}
-
-export interface Subscription {
-  organization_id: string;
-  organization_name: string;
-  status: string;
-  plan: SubscriptionLine;
-  renews_on: string;
-  payment: { brand: string; last4: string; exp: string; demo: boolean };
-  invoices: SubscriptionInvoice[];
-}
-
-export async function fetchSubscription() {
-  return get<Subscription>("/org/subscription");
-}
-
-export async function paySubscriptionInvoice(invoiceId: string) {
-  return post<Subscription>(`/org/subscription/invoices/${invoiceId}/pay`);
 }
 
 export async function fetchOrgMembers() {

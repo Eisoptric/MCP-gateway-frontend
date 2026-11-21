@@ -1,15 +1,10 @@
-import type { ApiAgentSettings } from "@/lib/agent-config";
-
 export interface ApiAgent {
   id: string;
   name: string;
   description: string;
-  model: string;
   connected?: boolean;
   enrolled?: boolean;
-  runtime_id?: string | null;
   last_seen_at?: string | null;
-  settings?: ApiAgentSettings;
   tool_set_id?: string | null;
   profile_id?: string | null;
   origin?: string | null;
@@ -112,16 +107,6 @@ export interface AccessPermissions {
   team: "none" | "read" | "write";
 }
 
-export interface Entitlements {
-  gateway: boolean;
-  tool_set_limit: number | null;
-  policies: boolean;
-  webhooks?: boolean;
-  groups?: boolean;
-  audit: "basic" | "full" | string;
-  audit_days: number | null;
-}
-
 export interface AuthUserResponse {
   id: string;
   email: string;
@@ -131,8 +116,8 @@ export interface AuthUserResponse {
   role: string | null;
   permissions: AccessPermissions;
   is_platform_admin?: boolean;
-  organization: { id: string; name: string; plan?: string; kind?: string; photo?: string | null; entitlements?: Entitlements };
-  enterprise: { id: string; name: string; plan?: string; kind?: string; photo?: string | null; entitlements?: Entitlements };
+  organization: { id: string; name: string; kind?: string; photo?: string | null };
+  enterprise: { id: string; name: string; kind?: string; photo?: string | null };
   employee: { id: string; title: string; status: string; role: string; permissions: AccessPermissions } | null;
   agents: { id: string; name: string; status: string }[];
   mcp_servers: {

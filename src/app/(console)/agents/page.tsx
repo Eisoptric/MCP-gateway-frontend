@@ -34,11 +34,10 @@ export default function AgentsPage() {
           userId: user.id,
           organizationId: org.id,
           kind: org.kind,
-          plan: org.plan,
         })
       : "";
   const agents = (data?.agents ?? []).filter((agent) => agent.origin === "gateway_mcp");
-  const personal = org?.kind === "personal" || (org?.kind !== "organization" && org?.plan !== "enterprise");
+  const personal = org?.kind !== "organization";
   const selected = agents.find((agent) => agent.id === selectedId) ?? null;
   const toolSets = data?.toolSets ?? [];
 
