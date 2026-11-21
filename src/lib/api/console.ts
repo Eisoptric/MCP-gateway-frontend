@@ -1,4 +1,3 @@
-import type { ApiAgentSettings } from "@/lib/agent-config";
 import { pagePath } from "@/lib/activity-pages";
 import { mapActivityEvents, mapConsole } from "@/lib/mappers";
 import type { ActivityEvent, Agent, ConsoleData, Integration, Policy } from "@/types";
@@ -69,21 +68,10 @@ export async function fetchSystemStatus() {
   return data.services;
 }
 
-export async function createAgent(body: {
-  name: string;
-  description?: string;
-  model?: string;
-}): Promise<ApiAgent> {
-  return post<ApiAgent>("/agents", body);
-}
-
 export interface AgentUpdateBody {
   name?: string;
   description?: string;
-  model?: string;
-  runtime_id?: string | null;
   tool_set_id?: string | null;
-  settings?: Partial<ApiAgentSettings>;
 }
 
 export async function updateAgent(

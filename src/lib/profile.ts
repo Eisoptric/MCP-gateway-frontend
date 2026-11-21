@@ -4,13 +4,9 @@ export function profileIdentity(input: {
   userId: string;
   organizationId: string;
   kind?: string | null;
-  plan?: string | null;
 }): string {
   const kind = (input.kind || "").trim().toLowerCase();
-  const personal =
-    kind === "personal" ||
-    (kind !== "organization" && (input.plan || "free") !== "enterprise");
-  if (personal) return input.userId;
+  if (kind !== "organization") return input.userId;
   return `${input.organizationId}:${input.userId}`;
 }
 

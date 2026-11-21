@@ -23,8 +23,7 @@ export default function SettingsPage() {
   const members = useOrgMembers();
   const organization = workspace.data?.organization;
   const kind = organization?.kind ?? sessionOrg?.kind;
-  const plan = organization?.plan ?? sessionOrg?.plan;
-  const personal = kind === "personal" || (kind == null && (plan === "free" || plan === "pro" || plan === "trial" || plan === "starter"));
+  const personal = kind !== "organization";
   const canTeam = canAccess(sessionUser?.permissions, "team", "read") && !personal;
   const canEditPhoto = canAccess(sessionUser?.permissions, "team", "write");
   const client = useQueryClient();

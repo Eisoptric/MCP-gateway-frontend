@@ -46,8 +46,7 @@ export function Sidebar() {
   const workspace = useOrg();
   const savedOrg = useAuthStore((state) => state.org);
   const kind = workspace.data?.organization.kind ?? savedOrg?.kind;
-  const plan = workspace.data?.organization.plan ?? savedOrg?.plan;
-  const personal = kind === "personal" || (kind == null && (plan === "free" || plan === "pro" || plan === "trial" || plan === "starter"));
+  const personal = kind !== "organization";
   const canTeam = canAccess(permissions, "team", "read") && !personal;
   const orgName = workspace.data?.organization.name ?? savedOrg?.name;
   const brand = personal ? t("nav.personalLabel") : orgName || "—";

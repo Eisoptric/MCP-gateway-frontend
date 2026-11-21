@@ -32,7 +32,6 @@ export function toAuthSession(token: string | null, user: AuthUserResponse) {
     },
     org: {
       ...(user.organization),
-      plan: user.organization.plan,
       kind: user.organization.kind,
     },
   };
